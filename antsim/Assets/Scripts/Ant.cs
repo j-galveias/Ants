@@ -35,10 +35,15 @@ public class Ant : MonoBehaviour
 
     private float pheromoneEvaporateTime;
 
+    public GameObject foodMarker;
+    public GameObject homeMarker;
+    private Vector2 lastMarkerPosition;
+
     private void Start()
     {
         //TODO: Inicializar sensores
         map = FindObjectOfType<PheromoneMap>();
+        lastMarkerPosition = transform.position;
     }
 
     // Update is called once per frame
@@ -82,20 +87,30 @@ public class Ant : MonoBehaviour
 
         }
 
-
+        DropPheromone();
     }
 
     void DropPheromone()
     {
+        if ((transform.position - new Vector3(lastMarkerPosition.x, lastMarkerPosition.y)).magnitude >= 0.2)
+        {
+            GameObject marker;
+            if (searchingForFood)
+            {
+                marker = Instantiate(homeMarker);
+            }
+            else
+            {
+                marker = Instantiate(foodMarker);
+            }
 
+            lastMarkerPosition = marker.transform.position = transform.position;
+        }
     }
-
 
     void HandleFood() {
         if (targetFood == null)
         {
-            Debug.DrawLine(head.position, new Vector2(head.position.x + viewRadius, head.position.y + viewRadius), Color.blue);
-            
             Collider2D[] allFood = Physics2D.OverlapCircleAll(position, viewRadius, foodLayer);
 
             if (allFood.Length > 0)

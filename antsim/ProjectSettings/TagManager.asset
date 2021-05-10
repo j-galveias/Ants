@@ -16,8 +16,8 @@ TagManager:
   - foodLayer
   - takenFoodLayer
   - wall
-  - 
-  - 
+  - foodMarker
+  - homeMarker
   - 
   - 
   - 

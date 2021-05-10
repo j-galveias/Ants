@@ -8,9 +8,10 @@ public class Pheromone : MonoBehaviour
     
     public float creationTime;
 
+    public float disappearTime;
     
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         creationTime = Time.time;
     }
@@ -18,6 +19,9 @@ public class Pheromone : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (Time.time - creationTime > disappearTime)
+        {
+            Destroy(transform.gameObject);
+        }
     }
 }
