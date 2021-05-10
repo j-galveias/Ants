@@ -2,22 +2,27 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Pheromone : MonoBehaviour
+public class Sensor : MonoBehaviour
 {
-    public bool searchingForFoodMarker;
-    
-    public float creationTime;
 
-    
+    public int radius;
+    public Vector2 position;
+
+    public float value;
     // Start is called before the first frame update
     void Start()
     {
-        creationTime = Time.time;
+        
     }
 
     // Update is called once per frame
     void Update()
     {
         
+    }
+
+    public void UpdatePosition(Vector2 position, Vector2 forward)
+    {
+
     }
 }

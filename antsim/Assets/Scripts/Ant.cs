@@ -9,10 +9,15 @@ public class Ant : MonoBehaviour
     public float steerStrength = 2;
     public float wanderStrength = 1;
     public float viewRadius = 1;
+    public float avoidDistance;
     private float viewAngle = 90;
+
+    private bool searchingForFood = true;
+    private Pheromone pheromone = new Pheromone();
 
     public Transform targetFood;
 
+    public LayerMask wallLayer;
     public LayerMask foodLayer;
     int takenFoodLayer = 9;
 
@@ -20,12 +25,41 @@ public class Ant : MonoBehaviour
     Vector2 velocity;
     Vector2 desiredDirection;
 
+    public Sensor centerSensor;
+    public Sensor rightSensor;
+    public Sensor leftSensor;
+
     public Transform head;
+
+    private PheromoneMap map;
+
+    private float pheromoneEvaporateTime;
+
+    private void Start()
+    {
+        //TODO: Inicializar sensores
+        map = FindObjectOfType<PheromoneMap>();
+    }
 
     // Update is called once per frame
     void Update()
     {
         desiredDirection = (desiredDirection + Random.insideUnitCircle * wanderStrength).normalized;
+
+        RaycastHit2D resultLeft = Physics2D.Raycast(head.position, Quaternion.AngleAxis(30, Vector3.forward) * transform.right, 0.5f, wallLayer);
+        Debug.DrawRay(head.position, Quaternion.AngleAxis(30, Vector3.forward) * transform.right, Color.red);
+        Debug.DrawRay(head.position, Quaternion.AngleAxis(-30, Vector3.forward) * transform.right, Color.red);
+        if (resultLeft.collider != null)
+        {
+            desiredDirection = resultLeft.point + resultLeft.normal * avoidDistance;
+        }
+
+        RaycastHit2D resultRight = Physics2D.Raycast(head.position, Quaternion.AngleAxis(-30, Vector3.forward) * transform.right, 0.5f, wallLayer);
+
+        if (resultRight.collider != null)
+        {
+            desiredDirection = resultRight.point + resultLeft.normal * avoidDistance;
+        }
 
         Vector2 desiredVelocity = desiredDirection * maxSpeed;
         Vector2 desiredSteeringForce = (desiredVelocity - velocity) * steerStrength;
@@ -36,14 +70,32 @@ public class Ant : MonoBehaviour
 
         float angle = Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg;
         transform.SetPositionAndRotation(position, Quaternion.Euler(0, 0, angle));
-        HandleFood();
+
+        if (searchingForFood)
+        {
+            pheromone.searchingForFoodMarker = true;
+            HandleFood();
+        }
+        else
+        {
+            pheromone.searchingForFoodMarker = false;
+
+        }
+
+
     }
+
+    void DropPheromone()
+    {
+
+    }
+
 
     void HandleFood() {
         if (targetFood == null)
         {
             Debug.DrawLine(head.position, new Vector2(head.position.x + viewRadius, head.position.y + viewRadius), Color.blue);
-            Debug.DrawRay(head.position, -head.transform.up);
+            
             Collider2D[] allFood = Physics2D.OverlapCircleAll(position, viewRadius, foodLayer);
 
             if (allFood.Length > 0)
@@ -69,11 +121,12 @@ public class Ant : MonoBehaviour
                 targetFood.position = head.position;
                 targetFood.parent = head;
                 targetFood = null;
+                searchingForFood = false;
             }
         }
     }
 
-    /*void HandlePheromoneSteering() {
+    void HandlePheromoneSteering() {
         UpdateSensor(leftSensor);
         UpdateSensor(centerSensor);
         UpdateSensor(rightSensor);
@@ -88,14 +141,13 @@ public class Ant : MonoBehaviour
         else if (rightSensor.value > leftSensor.value) {
             desiredDirection = -head.transform.up;
         }
-    }*/
+    }
 
-    /*void UpdateSensor(Sensor sensor) {
+    void UpdateSensor(Sensor sensor) {
         sensor.UpdatePosition(position, head.transform.right);
         sensor.value = 0;
 
-        PheromoneMap map = (searchingForFood) ? foodMarkers : homeMarkers;
-        Pheromone[] pheromones = map.GetAllinCircle(sensor.position, sensor.radius);
+        Pheromone[] pheromones = map.GetAllInCircle(sensor.position, sensor.radius, searchingForFood);
 
         foreach(Pheromone pheromone in pheromones)
         {
@@ -103,7 +155,7 @@ public class Ant : MonoBehaviour
             float evaporateAmount = Mathf.Max(1, lifetime / pheromoneEvaporateTime);
             sensor.value += 1 - evaporateAmount;
         }
-    }*/
+    }
 
     float Distance(Vector3 food, Vector3 head)
     {
