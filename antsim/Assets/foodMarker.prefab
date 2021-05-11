@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 748144784707290961}
   - component: {fileID: 5080415960195521024}
   - component: {fileID: 4095557474487951946}
+  - component: {fileID: 8347943449918955176}
   m_Layer: 11
   m_Name: foodMarker
   m_TagString: Untagged
@@ -96,4 +97,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   searchingForFoodMarker: 0
   creationTime: 0
-  disappearTime: 10
+  disappearTime: 30
+--- !u!58 &8347943449918955176
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5075362730850176085}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 0.5

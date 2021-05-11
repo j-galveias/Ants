@@ -12,7 +12,7 @@ public class Ant : MonoBehaviour
     public float avoidDistance;
     private float viewAngle = 90;
 
-    private bool searchingForFood = true;
+    public bool searchingForFood = true;
     private Pheromone pheromone = new Pheromone();
 
     public Transform targetFood;
@@ -86,7 +86,10 @@ public class Ant : MonoBehaviour
             pheromone.searchingForFoodMarker = false;
 
         }
-
+        if (targetFood == null)
+        {
+            HandlePheromoneSteering();
+        }
         DropPheromone();
     }
 
@@ -117,7 +120,7 @@ public class Ant : MonoBehaviour
             {
                 Transform food = allFood[Random.Range(0, allFood.Length)].transform;
                 Vector2 dirToFood = (food.position - head.position).normalized;
-                Debug.Log(Vector2.Angle(head.transform.right, dirToFood));
+                //Debug.Log(Vector2.Angle(head.transform.right, dirToFood));
                 if (Vector2.Angle(head.transform.right, dirToFood) < viewAngle)
                 {
                     food.gameObject.layer = takenFoodLayer;
@@ -142,9 +145,9 @@ public class Ant : MonoBehaviour
     }
 
     void HandlePheromoneSteering() {
-        UpdateSensor(leftSensor);
-        UpdateSensor(centerSensor);
-        UpdateSensor(rightSensor);
+        leftSensor.UpdateSensor(searchingForFood);
+        centerSensor.UpdateSensor(searchingForFood);
+        rightSensor.UpdateSensor(searchingForFood);
 
         if (centerSensor.value > Mathf.Max(leftSensor.value, rightSensor.value))
         {
@@ -158,22 +161,13 @@ public class Ant : MonoBehaviour
         }
     }
 
-    void UpdateSensor(Sensor sensor) {
-        sensor.UpdatePosition(position, head.transform.right);
-        sensor.value = 0;
-
-        Pheromone[] pheromones = map.GetAllInCircle(sensor.position, sensor.radius, searchingForFood);
-
-        foreach(Pheromone pheromone in pheromones)
-        {
-            float lifetime = Time.time - pheromone.creationTime;
-            float evaporateAmount = Mathf.Max(1, lifetime / pheromoneEvaporateTime);
-            sensor.value += 1 - evaporateAmount;
-        }
-    }
-
     float Distance(Vector3 food, Vector3 head)
     {
         return Mathf.Sqrt(Mathf.Pow(food.x - head.x, 2) + Mathf.Pow(food.y - head.y, 2));
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        Debug.Log(collision.gameObject.name);
     }
 }
