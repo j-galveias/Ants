@@ -20,7 +20,9 @@ public class Anthill : MonoBehaviour
         {
             food += 1;
 
-            collision.gameObject.transform.parent.transform.parent.GetComponent<Ant>().searchingForFood = true;
+            Ant ant = collision.gameObject.transform.parent.transform.parent.GetComponent<Ant>();
+            ant.searchingForFood = true;
+            ant.body.material.color = Color.white;
 
             Destroy(collision.gameObject);
         }

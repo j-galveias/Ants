@@ -39,6 +39,10 @@ public class Ant : MonoBehaviour
     public GameObject homeMarker;
     private Vector2 lastMarkerPosition;
 
+    public Renderer body;
+
+    public GameManager gameManager;
+
     private void Start()
     {
         //TODO: Inicializar sensores
@@ -71,6 +75,11 @@ public class Ant : MonoBehaviour
         Vector2 acceleration = Vector2.ClampMagnitude(desiredSteeringForce, steerStrength) / 1;
 
         velocity = Vector2.ClampMagnitude(velocity + acceleration * Time.deltaTime, maxSpeed);
+        /*if (!CanMove(velocity))
+        {
+            ReverseDirection();
+        }*/
+        
         position += velocity * Time.deltaTime;
 
         float angle = Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg;
@@ -86,7 +95,7 @@ public class Ant : MonoBehaviour
             pheromone.searchingForFoodMarker = false;
 
         }
-        if (targetFood == null)
+        if (targetFood == null && gameManager.mode == 2)
         {
             HandlePheromoneSteering();
         }
@@ -140,6 +149,7 @@ public class Ant : MonoBehaviour
                 targetFood.parent = head;
                 targetFood = null;
                 searchingForFood = false;
+                body.material.color = Color.yellow;
             }
         }
     }
@@ -152,6 +162,17 @@ public class Ant : MonoBehaviour
         if (centerSensor.value > Mathf.Max(leftSensor.value, rightSensor.value))
         {
             desiredDirection = head.transform.right;
+        }
+        else if ((centerSensor.value < leftSensor.value) && (centerSensor.value < rightSensor.value))
+        {
+            if (Random.value < 0.5f)
+            {
+                desiredDirection = head.transform.up;
+            }
+            else
+            {
+                desiredDirection = -head.transform.up;
+            }
         }
         else if (leftSensor.value > rightSensor.value) {
             desiredDirection = head.transform.up;
@@ -166,8 +187,15 @@ public class Ant : MonoBehaviour
         return Mathf.Sqrt(Mathf.Pow(food.x - head.x, 2) + Mathf.Pow(food.y - head.y, 2));
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    void ReverseDirection()
     {
-        Debug.Log(collision.gameObject.name);
+        transform.Rotate(Vector3.forward * 180);
+    }
+
+    bool CanMove(Vector2 velocity) {
+        var temp = this.position;
+        temp += velocity * Time.timeScale;
+
+        return temp.x >= -5f && temp.x <= 5f && temp.y >= -5f && temp.y <= 5f;
     }
 }
