@@ -97,7 +97,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   searchingForFoodMarker: 0
   creationTime: 0
-  disappearTime: 10
+  disappearTime: 25
 --- !u!58 &8347943449918955176
 CircleCollider2D:
   m_ObjectHideFlags: 0

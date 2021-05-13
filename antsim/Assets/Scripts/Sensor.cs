@@ -41,9 +41,10 @@ public class Sensor : MonoBehaviour
 
         foreach (Pheromone pheromone in pheromones)
         {
-            float lifetime = Time.time - pheromone.creationTime;
-            float evaporateAmount = Mathf.Min(1, lifetime / pheromone.disappearTime);
-            this.value += 1 - evaporateAmount;
+            //float lifetime = Time.time - pheromone.creationTime;
+            //float evaporateAmount = Mathf.Min(1, lifetime / pheromone.disappearTime);
+            //this.value += 1 - evaporateAmount;
+            this.value = Mathf.Max(pheromone.intensity, this.value);
         }
     }
 }

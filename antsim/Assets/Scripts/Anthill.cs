@@ -22,8 +22,10 @@ public class Anthill : MonoBehaviour
 
             Ant ant = collision.gameObject.transform.parent.transform.parent.GetComponent<Ant>();
             ant.searchingForFood = true;
+            ant.targetNest = null;
+            ant.count = 0;
             ant.body.material.color = Color.white;
-
+            ant.ReverseDirection();
             Destroy(collision.gameObject);
         }
     }

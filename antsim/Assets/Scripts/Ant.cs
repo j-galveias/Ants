@@ -16,9 +16,11 @@ public class Ant : MonoBehaviour
     private Pheromone pheromone = new Pheromone();
 
     public Transform targetFood;
+    public Transform targetNest;
 
     public LayerMask wallLayer;
     public LayerMask foodLayer;
+    public LayerMask nestLayer;
     int takenFoodLayer = 9;
 
     Vector2 position;
@@ -42,6 +44,8 @@ public class Ant : MonoBehaviour
     public Renderer body;
 
     public GameManager gameManager;
+
+    public int count = 0;
 
     private void Start()
     {
@@ -75,10 +79,6 @@ public class Ant : MonoBehaviour
         Vector2 acceleration = Vector2.ClampMagnitude(desiredSteeringForce, steerStrength) / 1;
 
         velocity = Vector2.ClampMagnitude(velocity + acceleration * Time.deltaTime, maxSpeed);
-        /*if (!CanMove(velocity))
-        {
-            ReverseDirection();
-        }*/
         
         position += velocity * Time.deltaTime;
 
@@ -95,9 +95,27 @@ public class Ant : MonoBehaviour
             pheromone.searchingForFoodMarker = false;
 
         }
-        if (targetFood == null && gameManager.mode == 2)
+        if (targetFood == null && gameManager.mode >= 2 )
         {
-            HandlePheromoneSteering();
+            if (Random.value < 0.1f && gameManager.mode == 3)
+            {
+                if (Random.value < 0.5f)
+                {
+                    desiredDirection = head.transform.up;
+                }
+                else
+                {
+                    desiredDirection = -head.transform.up;
+                }
+            }
+            else
+            {
+                HandlePheromoneSteering();
+            }
+        }
+        if (!searchingForFood)
+        {
+            HandleNest();
         }
         DropPheromone();
     }
@@ -106,14 +124,17 @@ public class Ant : MonoBehaviour
     {
         if ((transform.position - new Vector3(lastMarkerPosition.x, lastMarkerPosition.y)).magnitude >= 0.2)
         {
-            GameObject marker;
+            Pheromone marker;
+            count++;
             if (searchingForFood)
             {
-                marker = Instantiate(homeMarker);
+                marker = Instantiate(homeMarker).GetComponent<Pheromone>();
+                marker.createPheromone(count);
             }
             else
             {
-                marker = Instantiate(foodMarker);
+                marker = Instantiate(foodMarker).GetComponent<Pheromone>();
+                marker.createPheromone(count);
             }
 
             lastMarkerPosition = marker.transform.position = transform.position;
@@ -141,7 +162,7 @@ public class Ant : MonoBehaviour
         {
             desiredDirection = (targetFood.position - head.position).normalized;
 
-            const float foodPickupRadius = 0.05f;
+            const float foodPickupRadius = 0.3f;
 
             if (Distance(targetFood.position, head.position) < foodPickupRadius)
             {
@@ -150,7 +171,32 @@ public class Ant : MonoBehaviour
                 targetFood = null;
                 searchingForFood = false;
                 body.material.color = Color.yellow;
+                desiredDirection = -head.transform.right;
+                count = 0;
             }
+        }
+    }
+
+    void HandleNest()
+    {
+        if (targetNest == null)
+        {
+            Collider2D[] nest = Physics2D.OverlapCircleAll(position, 1, nestLayer);
+
+            if (nest.Length > 0)
+            {
+                Transform nestTransform = nest[0].transform;
+                Vector2 dirToNest = (nestTransform.position - head.position).normalized;
+
+                if (Vector2.Angle(head.transform.right, dirToNest) < viewAngle)
+                {
+                    targetNest = nestTransform;
+                }
+            }
+        }
+        else
+        {
+            desiredDirection = (targetNest.position - head.position).normalized;
         }
     }
 
@@ -187,9 +233,10 @@ public class Ant : MonoBehaviour
         return Mathf.Sqrt(Mathf.Pow(food.x - head.x, 2) + Mathf.Pow(food.y - head.y, 2));
     }
 
-    void ReverseDirection()
+    public void ReverseDirection()
     {
-        transform.Rotate(Vector3.forward * 180);
+        //transform.Rotate(Vector2.right * 180);
+        desiredDirection = -head.transform.right;
     }
 
     bool CanMove(Vector2 velocity) {

@@ -9,7 +9,11 @@ public class Pheromone : MonoBehaviour
     public float creationTime;
 
     public float disappearTime;
-    
+
+    public float intensity;
+
+    const float coef = 0.01f;
+
     // Start is called before the first frame update
     void Awake()
     {
@@ -23,5 +27,10 @@ public class Pheromone : MonoBehaviour
         {
             Destroy(transform.gameObject);
         }
+    }
+
+    public void createPheromone(int count)
+    {
+        intensity = 1000.0f * Mathf.Exp(-coef * count);
     }
 }
