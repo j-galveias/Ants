@@ -9,6 +9,21 @@ public class GameManager : MonoBehaviour
 
     public TMP_Text text;
 
+    public DictionaryObjectPool objectPool;
+    [SerializeField]
+    GameObject[] gos;
+    [SerializeField]
+    public int numberstospawn = 1000;
+    // Use this for initialization
+    void Start()
+    {
+        objectPool = new DictionaryObjectPool();
+        foreach (var item in gos)
+        {
+            objectPool.AddObjectPool(item.name, item, this.transform, numberstospawn);
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
