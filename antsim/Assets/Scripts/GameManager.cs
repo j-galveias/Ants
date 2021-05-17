@@ -34,7 +34,7 @@ public class GameManager : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.Q))
         {
-            Time.timeScale = Mathf.Max(1, Time.timeScale - 1f);
+            Time.timeScale = Mathf.Max(1, Time.timeScale - 1);
             text.text = Time.timeScale.ToString();
         }
         else if (Input.GetKeyDown(KeyCode.Alpha1))

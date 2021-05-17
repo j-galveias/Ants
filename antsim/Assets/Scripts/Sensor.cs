@@ -22,22 +22,22 @@ public class Sensor : MonoBehaviour
         if (searchingForFood)
         {
             pheromones = Physics2D.OverlapCircleAll(renderer.bounds.center, this.radius, foodMarker).Select<Collider2D, Pheromone>(col => col.gameObject.GetComponent<Pheromone>()).ToArray();
-            Collider2D[] cols = Physics2D.OverlapCircleAll(this.transform.position, radius, foodMarker);
+            //Collider2D[] cols = Physics2D.OverlapCircleAll(this.transform.position, radius, foodMarker);
         }
         else
         {
             pheromones = Physics2D.OverlapCircleAll(renderer.bounds.center, this.radius, homeMarker).Select<Collider2D, Pheromone>(col => col.gameObject.GetComponent<Pheromone>()).ToArray();
-            Collider2D[] cols = Physics2D.OverlapCircleAll(this.transform.position, radius, homeMarker);
+            //Collider2D[] cols = Physics2D.OverlapCircleAll(this.transform.position, radius, homeMarker);
         }
 
-        if (pheromones.Length > 0)
+        /*if (pheromones.Length > 0)
         {
             renderer.material.color = Color.cyan;
         }
         else
         {
             renderer.material.color = Color.white;
-        }
+        }*/
 
         foreach (Pheromone pheromone in pheromones)
         {
