@@ -267,8 +267,8 @@ public class Ant : MonoBehaviour
                 targetFood = null;
                 searchingForFood = false;
                 body.material.color = Color.yellow;
-                desiredDirection = -head.transform.right;
                 count = 0;
+                ReverseDirection();
             }
         }
     }

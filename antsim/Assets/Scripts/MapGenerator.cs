@@ -16,6 +16,10 @@ public class MapGenerator : MonoBehaviour {
 
 	public int numAnts;
 
+	public int foodPacks;
+	public int foodSpawnCount;
+	public GameObject foodGameObject;
+
 	public GameObject nest;
 	public GameObject _camera;
 	public GameObject ants;
@@ -67,7 +71,9 @@ public class MapGenerator : MonoBehaviour {
 		nest.transform.position = new Vector3(width / 2, height / 2, nest.transform.position.z);
 		_camera.transform.position = new Vector3(width / 2, height / 2, _camera.transform.position.z);
 		ants.transform.position = new Vector3(width / 2, height / 2, ants.transform.position.z);
-		foods.transform.position = new Vector3(width / 2, height / 2, foods.transform.position.z);
+		//foods.transform.position = new Vector3(width / 2, height / 2, foods.transform.position.z);
+
+		SpawnFood();
 
         for (int i = 0; i < numAnts; i++)
         {
@@ -77,6 +83,27 @@ public class MapGenerator : MonoBehaviour {
 		}
 
 		pheromoneMap.CreatePheromoneMaps(map, width, height);
+	}
+
+	void SpawnFood() {
+		System.Random pseudoRandom = new System.Random(seed.GetHashCode());
+        for (int i = 0; i < foodPacks; i++)
+        {
+			int x = 1;
+			int y = 1;
+			while (map[x, y] != 0 || map[x - 1, y] != 0 || map[x + 1, y] != 0 || map[x, y - 1] != 0 || map[x, y + 1] != 0
+				/*&& map[x + 1, y + 1] == 0 && map[x - 1, y + 1] == 0 && map[x + 1, y - 1] == 0 && map[x - 1, y - 1] == 0*/)
+			{
+				x = pseudoRandom.Next(1, width - 1);
+				y = pseudoRandom.Next(1, height - 1);
+			}
+
+            for (int k = 0; k < foodSpawnCount; k++)
+            {
+				GameObject food = Instantiate(foodGameObject);
+				food.transform.position = new Vector2(x, y);
+            }
+        }
 	}
 
 	void ProcessMap() {
