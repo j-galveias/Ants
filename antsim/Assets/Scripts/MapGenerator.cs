@@ -28,7 +28,7 @@ public class MapGenerator : MonoBehaviour {
 
 	public PheromoneMap pheromoneMap;
 
-	int[,] map;
+	public int[,] map;
 
 	void Start() {
 		GenerateMap();

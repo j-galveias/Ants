@@ -29,9 +29,9 @@ namespace Assets.Scripts.utils
             var sin = (float)Math.Sin(angle);
             var cos = (float)Math.Cos(angle);
 
-            var x = vector.x * cos - vector.z * sin;
-            var z = vector.x * sin + vector.z * cos;
-            return new Vector3(x, vector.y, z);
+            var x = vector.x * cos - vector.y * sin;
+            var y = vector.x * sin + vector.y * cos;
+            return new Vector3(x, y, vector.z);
         }
 
         //method adapted from https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-sphere-intersection

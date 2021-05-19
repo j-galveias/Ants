@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Pheromone : MonoBehaviour, ISpawnEvent
-{
-    ObjectPool pool;
-
+public class Pheromone : MonoBehaviour 
+{ 
     public bool searchingForFoodMarker;
     
     public float creationTime;
@@ -39,27 +37,23 @@ public class Pheromone : MonoBehaviour, ISpawnEvent
         if (Time.time - creationTime > disappearTime)
         {
             Destroy(transform.gameObject);
-            Color temp = _renderer.color;
+            /*Color temp = _renderer.color;
             alpha = 0;
             temp.a = alpha;
             _renderer.color = temp;
-            intensity = 0;
-            //pool.Despawn(this.gameObject);
+            intensity = 0;*/
         }
+
+        intensity -= Time.deltaTime;
     }
 
-    public void createPheromone(int count)
+    public void createPheromone(float count)
     {
         creationTime = Time.time;
         intensity = 1000.0f * Mathf.Exp(-coef * count);
-        Color temp = _renderer.color;
+        /*Color temp = _renderer.color;
         alpha = intensity / maxIntensity;
         temp.a = alpha;
-        _renderer.color = temp;
-    }
-
-    public void OnSpawned(GameObject targetGameObject, ObjectPool sender)
-    {
-        pool = sender;
+        _renderer.color = temp;*/
     }
 }

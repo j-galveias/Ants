@@ -221,7 +221,7 @@ MonoBehaviour:
   gos:
   - {fileID: 6560415984656233043, guid: 0b08b1a1979fb7c48a9f522f648a1255, type: 3}
   - {fileID: 5075362730850176085, guid: a41123eb9070a2241a9b3a2f30d03509, type: 3}
-  numberstospawn: 1000
+  numberstospawn: 50000
 --- !u!4 &237072630
 Transform:
   m_ObjectHideFlags: 0

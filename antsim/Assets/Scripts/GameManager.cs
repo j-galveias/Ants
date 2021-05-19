@@ -13,14 +13,14 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     GameObject[] gos;
     [SerializeField]
-    public int numberstospawn = 1000;
+    public int numberstospawn;
     // Use this for initialization
     void Start()
     {
         objectPool = new DictionaryObjectPool();
         foreach (var item in gos)
         {
-            objectPool.AddObjectPool(item.name, item, this.transform, numberstospawn);
+            objectPool.AddObjectPool(item.name, item, this.transform, numberstospawn/2);
         }
     }
 

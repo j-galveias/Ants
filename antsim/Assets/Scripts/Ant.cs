@@ -5,10 +5,10 @@ using UnityEngine;
 
 public class Ant : MonoBehaviour
 {
-    public float maxSpeed = 2;
-    public float steerStrength = 2;
-    public float wanderStrength = 1;
-    public float viewRadius = 1;
+    public float maxSpeed;
+    public float steerStrength;
+    public float wanderStrength;
+    public float viewRadius;
     public float avoidDistance;
     private float viewAngle = 90;
 
@@ -31,7 +31,7 @@ public class Ant : MonoBehaviour
     public Sensor rightSensor;
     public Sensor leftSensor;
 
-    public Transform head;
+    public Rigidbody2D head;
 
     private PheromoneMap map;
 
@@ -45,11 +45,14 @@ public class Ant : MonoBehaviour
 
     public GameManager gameManager;
 
-    public int count = 0;
+    public float count = 0;
+    public float pheromonePeriod = 0.125f;
 
+    MapGenerator mapGenerator;
     private void Start()
     {
         gameManager = FindObjectOfType<GameManager>();
+        mapGenerator = FindObjectOfType<MapGenerator>();
         //TODO: Inicializar sensores
         map = FindObjectOfType<PheromoneMap>();
         lastMarkerPosition = transform.position;
@@ -64,34 +67,7 @@ public class Ant : MonoBehaviour
         //RaycastHit2D resultLeft = Physics2D.Raycast(head.position, Quaternion.AngleAxis(30, Vector3.forward) * transform.right, 0.5f, wallLayer);
         //Debug.DrawRay(head.position, Quaternion.AngleAxis(30, Vector3.forward) * transform.right, Color.red);
         //Debug.DrawRay(head.position, Quaternion.AngleAxis(-30, Vector3.forward) * transform.right, Color.red);
-        RaycastHit2D resultLeft = Physics2D.Raycast(head.position, Quaternion.AngleAxis(30, Vector2.right) * transform.right, 0.5f, wallLayer);
-        //Debug.DrawRay(head.position, Quaternion.AngleAxis(30, Vector2.right) * transform.right, Color.red);
-        //Debug.DrawRay(head.position, Quaternion.AngleAxis(-30, Vector2.right) * transform.right, Color.red);
-        if (resultLeft.collider != null)
-        {
-            desiredDirection = resultLeft.point + resultLeft.normal * avoidDistance;
-        }
-        else
-        {
-            //RaycastHit2D resultRight = Physics2D.Raycast(head.position, Quaternion.AngleAxis(-30, Vector3.forward) * transform.right, 0.5f, wallLayer);
-            RaycastHit2D resultRight = Physics2D.Raycast(head.position, Quaternion.AngleAxis(-30, Vector2.right) * transform.right, 0.5f, wallLayer);
-
-            if (resultRight.collider != null)
-            {
-                desiredDirection = resultRight.point + resultLeft.normal * avoidDistance;
-            }
-        }
-
-        Vector2 desiredVelocity = desiredDirection * maxSpeed;
-        Vector2 desiredSteeringForce = (desiredVelocity - velocity) * steerStrength;
-        Vector2 acceleration = Vector2.ClampMagnitude(desiredSteeringForce, steerStrength) / 1;
-
-        velocity = Vector2.ClampMagnitude(velocity + acceleration * Time.deltaTime, maxSpeed);
         
-        position = new Vector2(transform.position.x, transform.position.y) + velocity * Time.deltaTime;
-
-        float angle = Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg;
-        transform.SetPositionAndRotation(position, Quaternion.Euler(0, 0, angle));
 
         if (searchingForFood)
         {
@@ -109,11 +85,11 @@ public class Ant : MonoBehaviour
             {
                 if (Random.value < 0.5f)
                 {
-                    desiredDirection = head.transform.up;
+                    desiredDirection = MathHelper.Rotate2D(desiredDirection, 45);
                 }
                 else
                 {
-                    desiredDirection = -head.transform.up;
+                    desiredDirection = MathHelper.Rotate2D(desiredDirection, -45);
                 }
             }
             else
@@ -125,7 +101,36 @@ public class Ant : MonoBehaviour
         {
             HandleNest();
         }
+        RaycastHit2D resultLeft = Physics2D.Raycast(head.position, Quaternion.AngleAxis(30, Vector2.right) * head.transform.right, 0.5f, wallLayer);
+        //Debug.DrawRay(head.position, Quaternion.AngleAxis(30, Vector2.right) * transform.right, Color.red);
+        //Debug.DrawRay(head.position, Quaternion.AngleAxis(-30, Vector2.right) * transform.right, Color.red);
+        if (resultLeft.collider != null)
+        {
+            desiredDirection = resultLeft.point + resultLeft.normal * avoidDistance;
+        }
+        else
+        {
+            //RaycastHit2D resultRight = Physics2D.Raycast(head.position, Quaternion.AngleAxis(-30, Vector3.forward) * transform.right, 0.5f, wallLayer);
+            RaycastHit2D resultRight = Physics2D.Raycast(head.position, Quaternion.AngleAxis(-30, Vector2.right) * head.transform.right, 0.5f, wallLayer);
+
+            if (resultRight.collider != null)
+            {
+                desiredDirection = resultRight.point + resultLeft.normal * avoidDistance;
+            }
+        }
+
+        Vector2 desiredVelocity = desiredDirection * maxSpeed;
+        Vector2 desiredSteeringForce = (desiredVelocity - velocity) * steerStrength;
+        Vector2 acceleration = Vector2.ClampMagnitude(desiredSteeringForce, steerStrength) / 1;
+
+        velocity = Vector2.ClampMagnitude(velocity + acceleration * Time.deltaTime, maxSpeed);
+
+        position = new Vector2(transform.position.x, transform.position.y) + velocity * Time.deltaTime;
+
+        float angle = Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg;
+        transform.SetPositionAndRotation(position, Quaternion.Euler(0, 0, angle));
         DropPheromone();
+        CheckOutsideMap();
     }
 
     void DropPheromone()
@@ -133,7 +138,7 @@ public class Ant : MonoBehaviour
         if ((new Vector2(RoundDecimal(transform.position.x), RoundDecimal(transform.position.y)) - new Vector2(lastMarkerPosition.x, lastMarkerPosition.y)).magnitude >= 0.2)
         {
             Pheromone marker;
-            count++;
+            count += pheromonePeriod;
             if (searchingForFood)
             {
                 marker = Instantiate(homeMarker).GetComponent<Pheromone>();
@@ -233,7 +238,7 @@ public class Ant : MonoBehaviour
 
             lastMarkerPosition = marker.transform.position = new Vector3(RoundDecimal(transform.position.x), RoundDecimal(transform.position.y), 0);
 
-            //EasyObjectPool.instance.ReturnObjectToPool(marker.gameObject);
+            
         }
     }*/
 
@@ -245,7 +250,7 @@ public class Ant : MonoBehaviour
             if (allFood.Length > 0)
             {
                 Transform food = allFood[Random.Range(0, allFood.Length)].transform;
-                Vector2 dirToFood = (food.position - head.position).normalized;
+                Vector2 dirToFood = (food.position - new Vector3(head.position.x, head.position.y)).normalized;
                 //Debug.Log(Vector2.Angle(head.transform.right, dirToFood));
                 if (Vector2.Angle(head.transform.right, dirToFood) < viewAngle)
                 {
@@ -256,14 +261,14 @@ public class Ant : MonoBehaviour
         }
         else
         {
-            desiredDirection = (targetFood.position - head.position).normalized;
+            desiredDirection = (targetFood.position - new Vector3(head.position.x, head.position.y)).normalized;
 
             const float foodPickupRadius = 0.3f;
 
             if (Distance(targetFood.position, head.position) < foodPickupRadius)
             {
                 targetFood.position = head.position;
-                targetFood.parent = head;
+                targetFood.parent = head.transform;
                 targetFood = null;
                 searchingForFood = false;
                 body.material.color = Color.yellow;
@@ -277,12 +282,10 @@ public class Ant : MonoBehaviour
     {
         if (targetNest == null)
         {
-            Collider2D[] nest = Physics2D.OverlapCircleAll(position, 1, nestLayer);
-
-            if (nest.Length > 0)
+            if (Distance(this.position, new Vector3(mapGenerator.width/2, mapGenerator.height / 2, 0)) <= 3)
             {
-                Transform nestTransform = nest[0].transform;
-                Vector2 dirToNest = (nestTransform.position - head.position).normalized;
+                Transform nestTransform = mapGenerator.nest.transform;
+                Vector2 dirToNest = (nestTransform.position - new Vector3(head.position.x, head.position.y)).normalized;
 
                 if (Vector2.Angle(head.transform.right, dirToNest) < viewAngle)
                 {
@@ -292,7 +295,7 @@ public class Ant : MonoBehaviour
         }
         else
         {
-            desiredDirection = (targetNest.position - head.position).normalized;
+            desiredDirection = (targetNest.position - new Vector3(head.position.x, head.position.y)).normalized;
         }
     }
 
@@ -309,36 +312,43 @@ public class Ant : MonoBehaviour
         {
             if (Random.value < 0.5f)
             {
-                desiredDirection = head.transform.up;
+                desiredDirection = MathHelper.Rotate2D(desiredDirection, 45);
             }
             else
             {
-                desiredDirection = -head.transform.up;
+                desiredDirection = MathHelper.Rotate2D(desiredDirection, -45);
             }
         }
         else if (leftSensor.value > rightSensor.value) {
-            desiredDirection = head.transform.up;
+            desiredDirection = MathHelper.Rotate2D(desiredDirection, 45);
         }
         else if (rightSensor.value > leftSensor.value) {
-            desiredDirection = -head.transform.up;
+            desiredDirection = MathHelper.Rotate2D(desiredDirection, -45);
         }
     }
 
-    float Distance(Vector3 food, Vector3 head)
+    float Distance(Vector3 v1, Vector3 v2)
     {
-        return Mathf.Sqrt(Mathf.Pow(food.x - head.x, 2) + Mathf.Pow(food.y - head.y, 2));
+        return Mathf.Sqrt(Mathf.Pow(v1.x - v2.x, 2) + Mathf.Pow(v1.y - v2.y, 2));
     }
 
     public void ReverseDirection()
     {
-        //transform.Rotate(Vector2.right * 180);
-        desiredDirection = -head.transform.right;
+        desiredDirection = MathHelper.Rotate2D(desiredDirection, 180);
     }
 
-    bool CanMove(Vector2 velocity) {
-        var temp = this.position;
-        temp += velocity * Time.timeScale;
-
-        return temp.x >= -5f && temp.x <= 5f && temp.y >= -5f && temp.y <= 5f;
+    void CheckOutsideMap() {
+        if (this.position.x <= 0 || this.position.x >= mapGenerator.width || this.position.y <= 0 || this.position.y >= mapGenerator.height)
+        {
+            this.transform.position = new Vector3(mapGenerator.width / 2, mapGenerator.height / 2, 0);
+        }
+        else if (mapGenerator.map[Mathf.RoundToInt(this.position.x), Mathf.RoundToInt(this.position.y)] != 0 
+            && mapGenerator.map[Mathf.RoundToInt(this.position.x) - 1, Mathf.RoundToInt(this.position.y)] != 0 
+            && mapGenerator.map[Mathf.RoundToInt(this.position.x) + 1, Mathf.RoundToInt(this.position.y)] != 0 
+            && mapGenerator.map[Mathf.RoundToInt(this.position.x), Mathf.RoundToInt(this.position.y) - 1] != 0 
+            && mapGenerator.map[Mathf.RoundToInt(this.position.x), Mathf.RoundToInt(this.position.y) + 1] != 0)
+        {
+            this.transform.position = new Vector3(mapGenerator.width / 2, mapGenerator.height / 2, 0);
+        }
     }
 }
