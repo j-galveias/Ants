@@ -33,12 +33,12 @@ public class Ant : MonoBehaviour
 
     public Transform head;
 
-    private PheromoneMap map;
+    private PheromonePooler pheromonePooler;
 
     private float pheromoneEvaporateTime;
 
-    public GameObject foodMarker;
-    public GameObject homeMarker;
+    public string foodMarker;
+    public string homeMarker;
     private Vector2 lastMarkerPosition;
 
     public Renderer body;
@@ -51,13 +51,13 @@ public class Ant : MonoBehaviour
     {
         gameManager = FindObjectOfType<GameManager>();
         //TODO: Inicializar sensores
-        map = FindObjectOfType<PheromoneMap>();
+        pheromonePooler = PheromonePooler.Instance;
         lastMarkerPosition = transform.position;
         //desiredDirection = transform.position;
     }
 
     // Update is called once per frame
-    void Update()
+    public void OnUpdate()
     {
         desiredDirection = (desiredDirection + Random.insideUnitCircle * wanderStrength).normalized;
 
@@ -136,7 +136,7 @@ public class Ant : MonoBehaviour
             count++;
             if (searchingForFood)
             {
-                marker = Instantiate(homeMarker).GetComponent<Pheromone>();
+                marker = pheromonePooler.SpawnFromPool(homeMarker, transform.position).GetComponent<Pheromone>();
                 marker.createPheromone(count);
                 /*marker = map.homeMap[Mathf.CeilToInt(transform.position.x), Mathf.CeilToInt(transform.position.y)];
                 if (marker != null)
@@ -146,7 +146,7 @@ public class Ant : MonoBehaviour
             }
             else
             {
-                marker = Instantiate(foodMarker).GetComponent<Pheromone>();
+                marker = pheromonePooler.SpawnFromPool(foodMarker, transform.position).GetComponent<Pheromone>();
                 marker.createPheromone(count);
 
                 /*marker = map.foodMap[Mathf.CeilToInt(transform.position.x), Mathf.CeilToInt(transform.position.y)];

@@ -36,16 +36,16 @@ public class Pheromone : MonoBehaviour, ISpawnEvent
     // Update is called once per frame
     void Update()
     {
-        if (Time.time - creationTime > disappearTime)
+        /*if (Time.time - creationTime > disappearTime)
         {
-            Destroy(transform.gameObject);
+            //Destroy(transform.gameObject);
             Color temp = _renderer.color;
             alpha = 0;
             temp.a = alpha;
             _renderer.color = temp;
             intensity = 0;
-            //pool.Despawn(this.gameObject);
-        }
+            //gameObject.SetActive(false);
+        }*/
     }
 
     public void createPheromone(int count)
