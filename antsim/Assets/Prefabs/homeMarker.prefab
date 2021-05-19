@@ -70,7 +70,7 @@ PrefabInstance:
     - target: {fileID: 4095557474487951946, guid: a41123eb9070a2241a9b3a2f30d03509,
         type: 3}
       propertyPath: disappearTime
-      value: 30
+      value: 60
       objectReference: {fileID: 0}
     - target: {fileID: 4095557474487951946, guid: a41123eb9070a2241a9b3a2f30d03509,
         type: 3}

@@ -27,6 +27,8 @@ public class MapGenerator : MonoBehaviour {
 	public GameObject antPrefab;
 	public List<Ant> listAnts;
 
+	public List<Food> listFoods;
+
 	public PheromoneMap pheromoneMap;
 
 	public int[,] map;
@@ -76,7 +78,7 @@ public class MapGenerator : MonoBehaviour {
 		this.transform.position = new Vector3(width / 2, height / 2, this.transform.position.z);
 		nest.transform.position = new Vector3(width / 2, height / 2, nest.transform.position.z);
 		_camera.transform.position = new Vector3(width / 2, height / 2, _camera.transform.position.z);
-		ants.transform.position = new Vector3(width / 2, height / 2, ants.transform.position.z);
+		//ants.transform.position = new Vector3(width / 2, height / 2, ants.transform.position.z);
 		//foods.transform.position = new Vector3(width / 2, height / 2, foods.transform.position.z);
 
 		SpawnFood();
@@ -105,12 +107,16 @@ public class MapGenerator : MonoBehaviour {
 				y = pseudoRandom.Next(1, height - 1);
 			}
 
-            for (int k = 0; k < foodSpawnCount; k++)
+			/*for (int k = 0; k < foodSpawnCount; k++)
             {
 				GameObject food = Instantiate(foodGameObject);
 				food.transform.position = new Vector2(x, y);
-            }
-        }
+            }*/
+			Food food = Instantiate(foodGameObject).GetComponent<Food>();
+			food.transform.position = new Vector2(x, y);
+			food.count = foodSpawnCount;
+			listFoods.Add(food);
+		}
 	}
 
 	void ProcessMap() {

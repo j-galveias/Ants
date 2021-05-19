@@ -13,23 +13,11 @@ public class GameManager : MonoBehaviour
     string display = "{0} FPS";
     public TMP_Text m_Text;
 
-    public DictionaryObjectPool objectPool;
-    [SerializeField]
-    GameObject[] gos;
-    [SerializeField]
-    public int numberstospawn = 1000;
-
     List<Ant> listAnts;
 
     // Use this for initialization
     void Start()
     {
-        objectPool = new DictionaryObjectPool();
-        foreach (var item in gos)
-        {
-            objectPool.AddObjectPool(item.name, item, this.transform, numberstospawn/2);
-        }
-
         listAnts = FindObjectOfType<MapGenerator>().listAnts;
     }
 

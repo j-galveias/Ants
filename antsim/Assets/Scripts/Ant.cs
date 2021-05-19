@@ -15,7 +15,7 @@ public class Ant : MonoBehaviour
     public bool searchingForFood = true;
     private Pheromone pheromone = new Pheromone();
 
-    public Transform targetFood;
+    public Food targetFood;
     public Transform targetNest;
 
     public LayerMask wallLayer;
@@ -31,7 +31,7 @@ public class Ant : MonoBehaviour
     public Sensor rightSensor;
     public Sensor leftSensor;
 
-    public Rigidbody2D head;
+    public Transform head;
 
     private PheromonePooler pheromonePooler;
 
@@ -48,11 +48,14 @@ public class Ant : MonoBehaviour
     public float count = 0;
     public float pheromonePeriod = 0.125f;
 
+    Anthill nest;
+
     MapGenerator mapGenerator;
     private void Start()
     {
         gameManager = FindObjectOfType<GameManager>();
         mapGenerator = FindObjectOfType<MapGenerator>();
+        nest = FindObjectOfType<Anthill>();
         //TODO: Inicializar sensores
         pheromonePooler = PheromonePooler.Instance;
         lastMarkerPosition = transform.position;
@@ -135,7 +138,7 @@ public class Ant : MonoBehaviour
 
     void DropPheromone()
     {
-        if ((new Vector2(RoundDecimal(transform.position.x), RoundDecimal(transform.position.y)) - new Vector2(lastMarkerPosition.x, lastMarkerPosition.y)).magnitude >= 0.2)
+        if ((new Vector2(RoundDecimal(transform.position.x), RoundDecimal(transform.position.y)) - new Vector2(lastMarkerPosition.x, lastMarkerPosition.y)).magnitude >= 0.5)
         {
             Pheromone marker;
             count += pheromonePeriod;
@@ -245,7 +248,7 @@ public class Ant : MonoBehaviour
     void HandleFood() {
         if (targetFood == null)
         {
-            Collider2D[] allFood = Physics2D.OverlapCircleAll(position, viewRadius, foodLayer);
+            /*Collider2D[] allFood = Physics2D.OverlapCircleAll(position, viewRadius, foodLayer);
 
             if (allFood.Length > 0)
             {
@@ -257,18 +260,35 @@ public class Ant : MonoBehaviour
                     food.gameObject.layer = takenFoodLayer;
                     targetFood = food;
                 }
+            }*/
+            foreach(Food food in mapGenerator.listFoods){
+                if (Distance(this.position, food.transform.position) <= viewRadius)
+                {
+                    if (food.count > 0)
+                    {
+                        Vector2 dirToFood = (food.transform.position - new Vector3(head.position.x, head.position.y)).normalized;
+                        //Debug.Log(Vector2.Angle(head.transform.right, dirToFood));
+                        if (Vector2.Angle(head.transform.right, dirToFood) < viewAngle)
+                        {
+                            food.gameObject.layer = takenFoodLayer;
+                            targetFood = food;
+                            break;
+                        }
+                    }
+                }
             }
         }
         else
         {
-            desiredDirection = (targetFood.position - new Vector3(head.position.x, head.position.y)).normalized;
+            desiredDirection = (targetFood.transform.position - new Vector3(head.position.x, head.position.y)).normalized;
 
             const float foodPickupRadius = 0.3f;
 
-            if (Distance(targetFood.position, head.position) < foodPickupRadius)
+            if (Distance(targetFood.transform.position, head.position) < foodPickupRadius)
             {
-                targetFood.position = head.position;
-                targetFood.parent = head.transform;
+                //targetFood.position = head.position;
+                //targetFood.parent = head.transform;
+                targetFood.count--;
                 targetFood = null;
                 searchingForFood = false;
                 body.material.color = Color.yellow;
@@ -282,9 +302,9 @@ public class Ant : MonoBehaviour
     {
         if (targetNest == null)
         {
-            if (Distance(this.position, new Vector3(mapGenerator.width/2, mapGenerator.height / 2, 0)) <= 3)
+            if (Distance(this.position, nest.transform.position) <= 3)
             {
-                Transform nestTransform = mapGenerator.nest.transform;
+                Transform nestTransform = nest.transform;
                 Vector2 dirToNest = (nestTransform.position - new Vector3(head.position.x, head.position.y)).normalized;
 
                 if (Vector2.Angle(head.transform.right, dirToNest) < viewAngle)
@@ -293,8 +313,17 @@ public class Ant : MonoBehaviour
                 }
             }
         }
-        else
+        else if (Distance(this.position, nest.transform.position) < 2)
         {
+            nest.food += 1;
+            searchingForFood = true;
+            targetNest = null;
+            count = 0;
+            body.material.color = Color.white;
+            ReverseDirection();
+            //Destroy(head.transform.GetChild(0).gameObject);
+        }
+        else { 
             desiredDirection = (targetNest.position - new Vector3(head.position.x, head.position.y)).normalized;
         }
     }
@@ -334,7 +363,7 @@ public class Ant : MonoBehaviour
 
     public void ReverseDirection()
     {
-        desiredDirection = MathHelper.Rotate2D(desiredDirection, 180);
+        desiredDirection = -transform.right;
     }
 
     void CheckOutsideMap() {

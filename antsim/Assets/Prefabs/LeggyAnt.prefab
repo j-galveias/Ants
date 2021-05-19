@@ -251,7 +251,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1420293658925059688}
-  - component: {fileID: 258400931365764304}
   m_Layer: 15
   m_Name: head
   m_TagString: Untagged
@@ -273,27 +272,6 @@ Transform:
   m_Father: {fileID: 1420293659404542900}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!50 &258400931365764304
-Rigidbody2D:
-  serializedVersion: 4
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1420293658925059695}
-  m_BodyType: 1
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDrag: 0
-  m_AngularDrag: 0.05
-  m_GravityScale: 1
-  m_Material: {fileID: 0}
-  m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
-  m_Constraints: 0
 --- !u!1 &1420293659190184976
 GameObject:
   m_ObjectHideFlags: 0
@@ -540,6 +518,7 @@ MonoBehaviour:
   body: {fileID: 1420293659404542907}
   gameManager: {fileID: 0}
   count: 0
+  pheromonePeriod: 0.125
 --- !u!61 &1420293659404542905
 BoxCollider2D:
   m_ObjectHideFlags: 0
