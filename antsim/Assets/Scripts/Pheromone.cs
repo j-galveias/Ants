@@ -10,9 +10,9 @@ public class Pheromone : MonoBehaviour
 
     public float disappearTime;
 
-    public float intensity = 0;
+    public float intensity;
 
-    public int maxIntensity = 1000;
+    public int maxIntensity;
 
     public SpriteRenderer _renderer;
 
@@ -24,6 +24,8 @@ public class Pheromone : MonoBehaviour
     void Awake()
     {
         creationTime = Time.time;
+        intensity = 0;
+        maxIntensity = 1000;
     }
 
     private void OnEnable()

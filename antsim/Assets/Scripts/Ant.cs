@@ -12,8 +12,7 @@ public class Ant : MonoBehaviour
     public float avoidDistance;
     private float viewAngle = 90;
 
-    public bool searchingForFood = true;
-    private Pheromone pheromone = new Pheromone();
+    public bool searchingForFood;
 
     public Food targetFood;
     public Transform targetNest;
@@ -45,8 +44,8 @@ public class Ant : MonoBehaviour
 
     public GameManager gameManager;
 
-    public float count = 0;
-    public float pheromonePeriod = 0.125f;
+    public float count;
+    public float pheromonePeriod;
 
     Anthill nest;
 
@@ -56,10 +55,11 @@ public class Ant : MonoBehaviour
         gameManager = FindObjectOfType<GameManager>();
         mapGenerator = FindObjectOfType<MapGenerator>();
         nest = FindObjectOfType<Anthill>();
-        //TODO: Inicializar sensores
         pheromonePooler = PheromonePooler.Instance;
         lastMarkerPosition = transform.position;
-        //desiredDirection = transform.position;
+        searchingForFood = true;
+        count = 0;
+        pheromonePeriod = 0.125f;
     }
 
     // Update is called once per frame
@@ -70,18 +70,12 @@ public class Ant : MonoBehaviour
         //RaycastHit2D resultLeft = Physics2D.Raycast(head.position, Quaternion.AngleAxis(30, Vector3.forward) * transform.right, 0.5f, wallLayer);
         //Debug.DrawRay(head.position, Quaternion.AngleAxis(30, Vector3.forward) * transform.right, Color.red);
         //Debug.DrawRay(head.position, Quaternion.AngleAxis(-30, Vector3.forward) * transform.right, Color.red);
-        
 
         if (searchingForFood)
         {
-            pheromone.searchingForFoodMarker = true;
             HandleFood();
         }
-        else
-        {
-            pheromone.searchingForFoodMarker = false;
 
-        }
         if (targetFood == null && gameManager.mode >= 2 )
         {
             if (Random.value < 0.01f && gameManager.mode == 3)
@@ -367,7 +361,7 @@ public class Ant : MonoBehaviour
     }
 
     void CheckOutsideMap() {
-        if (this.position.x <= 0 || this.position.x >= mapGenerator.width || this.position.y <= 0 || this.position.y >= mapGenerator.height)
+        if (Mathf.RoundToInt(this.position.x) <= 0 || Mathf.RoundToInt(this.position.x) >= mapGenerator.width - 1 || Mathf.RoundToInt(this.position.y) <= 0 || Mathf.RoundToInt(this.position.y) >= mapGenerator.height - 1)
         {
             this.transform.position = new Vector3(mapGenerator.width / 2, mapGenerator.height / 2, 0);
         }
