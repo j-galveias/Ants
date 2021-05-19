@@ -25,12 +25,18 @@ public class MapGenerator : MonoBehaviour {
 	public GameObject ants;
 	public GameObject foods;
 	public GameObject antPrefab;
+	public List<Ant> listAnts;
 
 	public PheromoneMap pheromoneMap;
 
 	public int[,] map;
 
-	void Start() {
+    private void Awake()
+    {
+		listAnts = new List<Ant>();
+	}
+
+    void Start() {
 		GenerateMap();
 	}
 
@@ -80,6 +86,7 @@ public class MapGenerator : MonoBehaviour {
 			GameObject ant = Instantiate(antPrefab);
 			//ant.transform.parent = ants.transform;
 			ant.transform.position = new Vector3(width / 2, height / 2, ant.transform.position.z);
+			listAnts.Add(ant.GetComponent<Ant>());
 		}
 
 		pheromoneMap.CreatePheromoneMaps(map, width, height);

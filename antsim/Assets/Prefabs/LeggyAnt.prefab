@@ -534,11 +534,9 @@ MonoBehaviour:
   centerSensor: {fileID: 1420293658103317159}
   rightSensor: {fileID: 1420293659190184977}
   leftSensor: {fileID: 1420293658258280590}
-  head: {fileID: 258400931365764304}
-  foodMarker: {fileID: 5075362730850176085, guid: a41123eb9070a2241a9b3a2f30d03509,
-    type: 3}
-  homeMarker: {fileID: 6560415984656233043, guid: 0b08b1a1979fb7c48a9f522f648a1255,
-    type: 3}
+  head: {fileID: 1420293658925059688}
+  foodMarker: food
+  homeMarker: home
   body: {fileID: 1420293659404542907}
   gameManager: {fileID: 0}
   count: 0

@@ -34,15 +34,17 @@ public class Pheromone : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Time.time - creationTime > disappearTime)
+        /*if (Time.time - creationTime > disappearTime)
         {
-            Destroy(transform.gameObject);
-            /*Color temp = _renderer.color;
+            //Destroy(transform.gameObject);
+            Color temp = _renderer.color;
             alpha = 0;
             temp.a = alpha;
             _renderer.color = temp;
-            intensity = 0;*/
-        }
+            intensity = 0;
+            //gameObject.SetActive(false);
+        }*/
+
 
         intensity -= Time.deltaTime;
     }

@@ -9,11 +9,18 @@ public class GameManager : MonoBehaviour
 
     public TMP_Text text;
 
+    public float timer, refresh, avgFramerate;
+    string display = "{0} FPS";
+    public TMP_Text m_Text;
+
     public DictionaryObjectPool objectPool;
     [SerializeField]
     GameObject[] gos;
     [SerializeField]
-    public int numberstospawn;
+    public int numberstospawn = 1000;
+
+    List<Ant> listAnts;
+
     // Use this for initialization
     void Start()
     {
@@ -22,11 +29,24 @@ public class GameManager : MonoBehaviour
         {
             objectPool.AddObjectPool(item.name, item, this.transform, numberstospawn/2);
         }
+
+        listAnts = FindObjectOfType<MapGenerator>().listAnts;
     }
 
     // Update is called once per frame
     void Update()
     {
+        foreach (Ant ant in listAnts)
+        {
+            ant.OnUpdate();
+        }
+
+        float timelapse = Time.smoothDeltaTime;
+        timer = timer <= 0 ? refresh : timer -= timelapse;
+
+        if (timer <= 0) avgFramerate = (int)(1f / timelapse);
+        m_Text.text = string.Format(display, avgFramerate.ToString());
+
         if (Input.GetKeyDown(KeyCode.E))
         {
             Time.timeScale += 1f;
