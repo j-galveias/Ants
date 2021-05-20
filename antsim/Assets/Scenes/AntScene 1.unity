@@ -649,7 +649,7 @@ MonoBehaviour:
   randomFillPercent: 48
   numAnts: 100
   foodPacks: 3
-  foodSpawnCount: 50
+  foodSpawnCount: 500
   foodGameObject: {fileID: 5852316306258805818, guid: 766e57f457e803c41bdfd23cfa809730,
     type: 3}
   nest: {fileID: 1043474574}
@@ -832,7 +832,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 37
+  orthographic size: 25.55
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
