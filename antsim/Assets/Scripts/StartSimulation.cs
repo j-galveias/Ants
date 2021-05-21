@@ -19,7 +19,7 @@ public class StartSimulation : MonoBehaviour
 
     public void OnButtonPressed()
     {
-        if (!string.IsNullOrEmpty(inputField.text))
+        if (!string.IsNullOrEmpty(inputField.text) && seedAndMode.Mode != 0)
         {
             seedAndMode.UpdateSeed(inputField.text);
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);

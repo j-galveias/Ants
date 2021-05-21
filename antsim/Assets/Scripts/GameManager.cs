@@ -19,6 +19,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         listAnts = FindObjectOfType<MapGenerator>().listAnts;
+        mode = FindObjectOfType<SeedAndMode>().Mode;
     }
 
     // Update is called once per frame
