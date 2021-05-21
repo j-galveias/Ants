@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        mode = FindObjectOfType<SeedAndMode>().Mode;
         listAnts = FindObjectOfType<MapGenerator>().listAnts;
         mode = FindObjectOfType<SeedAndMode>().Mode;
     }
@@ -30,6 +31,8 @@ public class GameManager : MonoBehaviour
             ant.OnUpdate();
         }
 
+        text.text = mode.ToString();
+
         float timelapse = Time.smoothDeltaTime;
         timer = timer <= 0 ? refresh : timer -= timelapse;
 
@@ -39,12 +42,10 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.E))
         {
             Time.timeScale += 1f;
-            text.text = Time.timeScale.ToString();
         }
         else if (Input.GetKeyDown(KeyCode.Q))
         {
             Time.timeScale = Mathf.Max(1, Time.timeScale - 1);
-            text.text = Time.timeScale.ToString();
         }
         else if (Input.GetKeyDown(KeyCode.Alpha1))
         {

@@ -20,7 +20,7 @@ public class MapGenerator : MonoBehaviour {
 	public int foodSpawnCount;
 	public GameObject foodGameObject;
 
-	public GameObject nest;
+	public Anthill nest;
 	public GameObject _camera;
 	public GameObject ants;
 	public GameObject foods;
@@ -39,13 +39,18 @@ public class MapGenerator : MonoBehaviour {
 	}
 
     void Start() {
+		seed = FindObjectOfType<SeedAndMode>().Seed;
 		GenerateMap();
 	}
 
 	void Update() {
-		if (Input.GetMouseButtonDown(0)) {
+        /*if (Input.GetMouseButtonDown(0)) {
 			GenerateMap();
-		}
+		}*/
+        if (nest.food == foodSpawnCount * foodPacks)
+        {
+			TimerControler.instace.StopTimer();
+        }
 	}
 
 	void GenerateMap() {
@@ -76,7 +81,7 @@ public class MapGenerator : MonoBehaviour {
 		meshGen.GenerateMesh(borderedMap, 1);
 
 		this.transform.position = new Vector3(width / 2, height / 2, this.transform.position.z);
-		nest.transform.position = new Vector3(width / 2, height / 2, nest.transform.position.z);
+		nest.gameObject.transform.position = new Vector3(width / 2, height / 2, nest.gameObject.transform.position.z);
 		_camera.transform.position = new Vector3(width / 2, height / 2, _camera.transform.position.z);
 		//ants.transform.position = new Vector3(width / 2, height / 2, ants.transform.position.z);
 		//foods.transform.position = new Vector3(width / 2, height / 2, foods.transform.position.z);
@@ -90,8 +95,9 @@ public class MapGenerator : MonoBehaviour {
 			ant.transform.position = new Vector3(width / 2, height / 2, ant.transform.position.z);
 			listAnts.Add(ant.GetComponent<Ant>());
 		}
-
-		pheromoneMap.CreatePheromoneMaps(map, width, height);
+		Time.timeScale = 3;
+		TimerControler.instace.StartTimer();
+		//pheromoneMap.CreatePheromoneMaps(map, width, height);
 	}
 
 	void SpawnFood() {
