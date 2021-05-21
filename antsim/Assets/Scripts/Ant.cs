@@ -71,22 +71,17 @@ public class Ant : MonoBehaviour
         //Debug.DrawRay(head.position, Quaternion.AngleAxis(30, Vector3.forward) * transform.right, Color.red);
         //Debug.DrawRay(head.position, Quaternion.AngleAxis(-30, Vector3.forward) * transform.right, Color.red);
 
-        if (searchingForFood)
-        {
-            HandleFood();
-        }
-
         if (targetFood == null && gameManager.mode >= 2 )
         {
-            if (Random.value < 0.01f && gameManager.mode == 3)
+            if (Random.value < 0.001f && gameManager.mode >= 3 && !searchingForFood)
             {
                 if (Random.value < 0.5f)
                 {
-                    desiredDirection = MathHelper.Rotate2D(desiredDirection, 45);
+                    desiredDirection = MathHelper.Rotate2D(desiredDirection, gameManager.mode == 4 ? Random.Range(0, MathConstants.MATH_2PI) : Random.Range(0, MathConstants.MATH_PI_4));
                 }
                 else
                 {
-                    desiredDirection = MathHelper.Rotate2D(desiredDirection, -45);
+                    desiredDirection = MathHelper.Rotate2D(desiredDirection, -(gameManager.mode == 4 ? Random.Range(0, MathConstants.MATH_2PI) : Random.Range(0, MathConstants.MATH_PI_4)));
                 }
             }
             else
@@ -94,25 +89,41 @@ public class Ant : MonoBehaviour
                 HandlePheromoneSteering();
             }
         }
-        if (!searchingForFood)
+        if (searchingForFood)
         {
-            HandleNest();
-        }
-        RaycastHit2D resultLeft = Physics2D.Raycast(head.position, Quaternion.AngleAxis(30, Vector2.right) * head.transform.right, 0.5f, wallLayer);
-        //Debug.DrawRay(head.position, Quaternion.AngleAxis(30, Vector2.right) * transform.right, Color.red);
-        //Debug.DrawRay(head.position, Quaternion.AngleAxis(-30, Vector2.right) * transform.right, Color.red);
-        if (resultLeft.collider != null)
-        {
-            desiredDirection = resultLeft.point + resultLeft.normal * avoidDistance;
+            HandleFood();
         }
         else
         {
-            //RaycastHit2D resultRight = Physics2D.Raycast(head.position, Quaternion.AngleAxis(-30, Vector3.forward) * transform.right, 0.5f, wallLayer);
-            RaycastHit2D resultRight = Physics2D.Raycast(head.position, Quaternion.AngleAxis(-30, Vector2.right) * head.transform.right, 0.5f, wallLayer);
+            HandleNest();
+        }
 
-            if (resultRight.collider != null)
+        RaycastHit2D resultFront = Physics2D.Raycast(head.position, desiredDirection/*Quaternion.AngleAxis(30, Vector2.right) * head.transform.right*/, 1f, wallLayer);
+        if (resultFront.collider != null)
+        {
+            desiredDirection = resultFront.point + resultFront.normal * avoidDistance;
+            //desiredDirection = -transform.right;
+        }
+        else
+        {
+            RaycastHit2D resultLeft = Physics2D.Raycast(head.position, MathHelper.Rotate2D(desiredDirection, MathConstants.MATH_PI / 6)/*Quaternion.AngleAxis(30, Vector2.right) * head.transform.right*/, 0.8f, wallLayer);
+            Debug.DrawRay(head.position, MathHelper.Rotate2D(desiredDirection, MathConstants.MATH_PI / 6), Color.red);
+            Debug.DrawRay(head.position, MathHelper.Rotate2D(desiredDirection, -MathConstants.MATH_PI / 6), Color.red);
+            if (resultLeft.collider != null)
             {
-                desiredDirection = resultRight.point + resultLeft.normal * avoidDistance;
+                desiredDirection = resultLeft.point + resultLeft.normal * avoidDistance;
+                //desiredDirection = -transform.right;
+            }
+            else
+            {
+                //RaycastHit2D resultRight = Physics2D.Raycast(head.position, Quaternion.AngleAxis(-30, Vector3.forward) * transform.right, 0.5f, wallLayer);
+                RaycastHit2D resultRight = Physics2D.Raycast(head.position, MathHelper.Rotate2D(desiredDirection, -MathConstants.MATH_PI / 6)/*Quaternion.AngleAxis(-30, Vector2.right) * head.transform.right*/, 0.8f, wallLayer);
+
+                if (resultRight.collider != null)
+                {
+                    desiredDirection = resultRight.point + resultLeft.normal * avoidDistance;
+                    //desiredDirection = -transform.right;
+                }
             }
         }
 
@@ -280,14 +291,19 @@ public class Ant : MonoBehaviour
 
             if (Distance(targetFood.transform.position, head.position) < foodPickupRadius)
             {
-                //targetFood.position = head.position;
-                //targetFood.parent = head.transform;
-                targetFood.count--;
-                targetFood = null;
-                searchingForFood = false;
-                body.material.color = Color.yellow;
-                count = 0;
-                ReverseDirection();
+                if (targetFood.count <= 0)
+                {
+                    targetFood = null;
+                }
+                else
+                {
+                    targetFood.count--;
+                    targetFood = null;
+                    searchingForFood = false;
+                    body.material.color = Color.yellow;
+                    count = 0;
+                    ReverseDirection();
+                }
             }
         }
     }
@@ -309,22 +325,26 @@ public class Ant : MonoBehaviour
         }
         else if (Distance(this.position, nest.transform.position) < 2)
         {
-            nest.food += 1;
-            searchingForFood = true;
-            targetNest = null;
-            count = 0;
-            body.material.color = Color.white;
-            ReverseDirection();
-            //Destroy(head.transform.GetChild(0).gameObject);
+            DropFood();
         }
-        else { 
+        else
+        {
             desiredDirection = (targetNest.position - new Vector3(head.position.x, head.position.y)).normalized;
         }
     }
 
+    void DropFood() {
+        nest.food += 1;
+        searchingForFood = true;
+        targetNest = null;
+        count = 0;
+        body.material.color = Color.white;
+        ReverseDirection();
+    }
+
     void HandlePheromoneSteering() {
-        leftSensor.UpdateSensor(searchingForFood);
         centerSensor.UpdateSensor(searchingForFood);
+        leftSensor.UpdateSensor(searchingForFood);
         rightSensor.UpdateSensor(searchingForFood);
 
         if (centerSensor.value > Mathf.Max(leftSensor.value, rightSensor.value))
@@ -335,18 +355,18 @@ public class Ant : MonoBehaviour
         {
             if (Random.value < 0.5f)
             {
-                desiredDirection = MathHelper.Rotate2D(desiredDirection, 45);
+                desiredDirection = MathHelper.Rotate2D(desiredDirection, MathConstants.MATH_PI_4);
             }
             else
             {
-                desiredDirection = MathHelper.Rotate2D(desiredDirection, -45);
+                desiredDirection = MathHelper.Rotate2D(desiredDirection, -MathConstants.MATH_PI_4);
             }
         }
         else if (leftSensor.value > rightSensor.value) {
-            desiredDirection = MathHelper.Rotate2D(desiredDirection, 45);
+            desiredDirection = MathHelper.Rotate2D(desiredDirection, MathConstants.MATH_PI_4);
         }
         else if (rightSensor.value > leftSensor.value) {
-            desiredDirection = MathHelper.Rotate2D(desiredDirection, -45);
+            desiredDirection = MathHelper.Rotate2D(desiredDirection, -MathConstants.MATH_PI_4);
         }
     }
 
@@ -357,12 +377,17 @@ public class Ant : MonoBehaviour
 
     public void ReverseDirection()
     {
-        desiredDirection = -transform.right;
+        desiredDirection = MathHelper.Rotate2D(desiredDirection, MathConstants.MATH_PI);
+        transform.Rotate(0, 0, MathConstants.MATH_PI, Space.World);
     }
 
     void CheckOutsideMap() {
         if (Mathf.RoundToInt(this.position.x) <= 0 || Mathf.RoundToInt(this.position.x) >= mapGenerator.width - 1 || Mathf.RoundToInt(this.position.y) <= 0 || Mathf.RoundToInt(this.position.y) >= mapGenerator.height - 1)
         {
+            if (!searchingForFood)
+            {
+                DropFood();
+            }
             this.transform.position = new Vector3(mapGenerator.width / 2, mapGenerator.height / 2, 0);
         }
         else if (mapGenerator.map[Mathf.RoundToInt(this.position.x), Mathf.RoundToInt(this.position.y)] != 0 
@@ -371,6 +396,10 @@ public class Ant : MonoBehaviour
             && mapGenerator.map[Mathf.RoundToInt(this.position.x), Mathf.RoundToInt(this.position.y) - 1] != 0 
             && mapGenerator.map[Mathf.RoundToInt(this.position.x), Mathf.RoundToInt(this.position.y) + 1] != 0)
         {
+            if (!searchingForFood)
+            {
+                DropFood();
+            }
             this.transform.position = new Vector3(mapGenerator.width / 2, mapGenerator.height / 2, 0);
         }
     }

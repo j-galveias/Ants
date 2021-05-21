@@ -17,7 +17,7 @@ GameObject:
   m_TagString: Food
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!4 &5852316306258805816
 Transform:
@@ -112,4 +112,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   count: 0
-  text: {fileID: 0}

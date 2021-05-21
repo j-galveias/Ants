@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 1420293658103317154}
   - component: {fileID: 1420293658103317159}
   - component: {fileID: 1420293658103317152}
-  - component: {fileID: 1420293658103317153}
   m_Layer: 13
   m_Name: CenterSensor
   m_TagString: Untagged
@@ -54,7 +53,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4096
   pheromoneEvaporateTime: 0
-  renderer: {fileID: 1420293658103317152}
+  sensorRenderer: {fileID: 1420293658103317152}
 --- !u!212 &1420293658103317152
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -105,22 +104,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!58 &1420293658103317153
-CircleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1420293658103317158}
-  m_Enabled: 0
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  serializedVersion: 2
-  m_Radius: 0.5
 --- !u!1 &1420293658258280589
 GameObject:
   m_ObjectHideFlags: 0
@@ -132,7 +115,6 @@ GameObject:
   - component: {fileID: 1420293658258280585}
   - component: {fileID: 1420293658258280590}
   - component: {fileID: 1420293658258280591}
-  - component: {fileID: 1420293658258280584}
   m_Layer: 13
   m_Name: LeftSensor
   m_TagString: Untagged
@@ -149,7 +131,7 @@ Transform:
   m_GameObject: {fileID: 1420293658258280589}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 1.64, y: 0.97, z: 0}
-  m_LocalScale: {x: 1.1506505, y: 2.358212, z: 0.6436142}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1420293659404542900}
   m_RootOrder: 1
@@ -175,7 +157,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4096
   pheromoneEvaporateTime: 0
-  renderer: {fileID: 1420293658258280591}
+  sensorRenderer: {fileID: 1420293658258280591}
 --- !u!212 &1420293658258280591
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -226,22 +208,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!58 &1420293658258280584
-CircleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1420293658258280589}
-  m_Enabled: 0
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  serializedVersion: 2
-  m_Radius: 0.49999997
 --- !u!1 &1420293658925059695
 GameObject:
   m_ObjectHideFlags: 0
@@ -283,7 +249,6 @@ GameObject:
   - component: {fileID: 1420293659190185964}
   - component: {fileID: 1420293659190184977}
   - component: {fileID: 1420293659190184978}
-  - component: {fileID: 1420293659190184979}
   m_Layer: 13
   m_Name: RightSensor
   m_TagString: Untagged
@@ -300,7 +265,7 @@ Transform:
   m_GameObject: {fileID: 1420293659190184976}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 1.64, y: -0.97, z: 0}
-  m_LocalScale: {x: 1.1506505, y: 2.358212, z: 0.6436142}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1420293659404542900}
   m_RootOrder: 3
@@ -326,7 +291,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4096
   pheromoneEvaporateTime: 0
-  renderer: {fileID: 1420293659190184978}
+  sensorRenderer: {fileID: 1420293659190184978}
 --- !u!212 &1420293659190184978
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -377,22 +342,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!58 &1420293659190184979
-CircleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1420293659190184976}
-  m_Enabled: 0
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  serializedVersion: 2
-  m_Radius: 0.5
 --- !u!1 &1420293659404542904
 GameObject:
   m_ObjectHideFlags: 0
@@ -404,7 +353,6 @@ GameObject:
   - component: {fileID: 1420293659404542900}
   - component: {fileID: 1420293659404542907}
   - component: {fileID: 1420293659404542906}
-  - component: {fileID: 1420293659404542905}
   m_Layer: 0
   m_Name: LeggyAnt
   m_TagString: Untagged
@@ -496,7 +444,7 @@ MonoBehaviour:
   steerStrength: 3
   wanderStrength: 0.1
   viewRadius: 2
-  avoidDistance: 1000
+  avoidDistance: 10000
   searchingForFood: 1
   targetFood: {fileID: 0}
   targetNest: {fileID: 0}
@@ -519,29 +467,3 @@ MonoBehaviour:
   gameManager: {fileID: 0}
   count: 0
   pheromonePeriod: 0.125
---- !u!61 &1420293659404542905
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1420293659404542904}
-  m_Enabled: 0
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.83, y: 0.63}
-    newSize: {x: 0.83, y: 0.63}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 0.83, y: 0.63}
-  m_EdgeRadius: 0

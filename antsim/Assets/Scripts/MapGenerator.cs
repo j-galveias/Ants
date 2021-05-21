@@ -100,7 +100,8 @@ public class MapGenerator : MonoBehaviour {
         {
 			int x = 1;
 			int y = 1;
-			while (map[x, y] != 0 || map[x - 1, y] != 0 || map[x + 1, y] != 0 || map[x, y - 1] != 0 || map[x, y + 1] != 0
+			while (map[x, y] != 0 || map[x - 1, y] != 0 || map[x + 1, y] != 0 || map[x, y - 1] != 0 || map[x, y + 1] != 0 ||
+				(x > (width / 2) - 10 && x < (width / 2) + 10) || (y > (height / 2) - 10 && y < (height / 2) + 10) || !checkFoodPosition(x, y)
 				/*&& map[x + 1, y + 1] == 0 && map[x - 1, y + 1] == 0 && map[x + 1, y - 1] == 0 && map[x - 1, y - 1] == 0*/)
 			{
 				x = pseudoRandom.Next(1, width - 1);
@@ -118,7 +119,16 @@ public class MapGenerator : MonoBehaviour {
 			listFoods.Add(food);
 		}
 	}
-
+	bool checkFoodPosition(int x, int y) {
+        foreach (var food in listFoods)
+        {
+            if (Mathf.Abs(food.transform.position.x - x) < 10 || Mathf.Abs(food.transform.position.y - y) < 10)
+            {
+				return false;
+            }
+        }
+		return true;
+	}
 	void ProcessMap() {
 		List<List<Coord>> wallRegions = GetRegions (1);
 		int wallThresholdSize = 50;
