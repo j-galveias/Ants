@@ -39,6 +39,7 @@ public class MapGenerator : MonoBehaviour {
 	}
 
     void Start() {
+		seed = FindObjectOfType<SeedAndMode>().Seed;
 		GenerateMap();
 	}
 
