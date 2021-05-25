@@ -47,6 +47,8 @@ public class Ant : MonoBehaviour
     public float count;
     public float pheromonePeriod;
 
+    private static System.Random rand = new System.Random();
+
     Anthill nest;
 
     MapGenerator mapGenerator;
@@ -158,22 +160,11 @@ public class Ant : MonoBehaviour
             {
                 marker = pheromonePooler.SpawnFromPool(homeMarker, transform.position).GetComponent<Pheromone>();
                 marker.createPheromone(count);
-                /*marker = map.homeMap[Mathf.CeilToInt(transform.position.x), Mathf.CeilToInt(transform.position.y)];
-                if (marker != null)
-                {
-                    marker.createPheromone(count);
-                }*/
             }
             else
             {
                 marker = pheromonePooler.SpawnFromPool(foodMarker, transform.position).GetComponent<Pheromone>();
                 marker.createPheromone(count);
-
-                /*marker = map.foodMap[Mathf.CeilToInt(transform.position.x), Mathf.CeilToInt(transform.position.y)];
-                if (marker != null)
-                {
-                    marker.createPheromone(count);
-                }*/
             }
 
             lastMarkerPosition = marker.transform.position = new Vector3(RoundDecimal(transform.position.x), RoundDecimal(transform.position.y), 0);
@@ -184,102 +175,15 @@ public class Ant : MonoBehaviour
         return (Mathf.Round(x * 10)) / 10;
     }
 
-    /*void DropPheromone()
-    {
-        if ((new Vector2(RoundDecimal(transform.position.x), RoundDecimal(transform.position.y)) - new Vector2(lastMarkerPosition.x, lastMarkerPosition.y)).magnitude >= 0.2)
-        {
-            Pheromone marker;
-            count++;
-            if (searchingForFood)
-            {
-                Pair<float, float> coords = new Pair<float, float>(RoundDecimal(transform.position.x), RoundDecimal(transform.position.y));
-                if (map.homeDic.ContainsKey(coords))
-                {
-                    marker = map.homeDic[coords];
-                    marker.createPheromone(count);
-                }
-                else
-                {
-                    marker = Instantiate(homeMarker).GetComponent<Pheromone>();
-                    marker.createPheromone(count);
-                    map.homeDic.Add(coords, marker);
-                }
-
-            }
-            else
-            {
-                Pair<float, float> coords = new Pair<float, float>(RoundDecimal(transform.position.x), RoundDecimal(transform.position.y));
-                if (map.foodDic.ContainsKey(coords))
-                {
-                    marker = map.foodDic[coords];
-                    marker.createPheromone(count);
-                }
-                else
-                {
-                    marker = Instantiate(foodMarker).GetComponent<Pheromone>();
-                    marker.createPheromone(count);
-                    map.foodDic.Add(coords, marker);
-                }
-            }
-
-            lastMarkerPosition = marker.transform.position = new Vector3(RoundDecimal(transform.position.x), RoundDecimal(transform.position.y), 0);
-        }
-    }*/
-
-    /*void DropPheromone()
-    {
-        if ((new Vector2(RoundDecimal(transform.position.x), RoundDecimal(transform.position.y)) - new Vector2(lastMarkerPosition.x, lastMarkerPosition.y)).magnitude >= 0.2)
-        {
-            Pheromone marker;
-            count++;
-            if (searchingForFood)
-            {
-                //Hard coded 0 = homepheromone
-                //if (gameManager.objectPool[0].Count < gameManager.numberstospawn)
-                //{
-                    marker = gameManager.objectPool[0].Spawn(this.transform.position).GetComponent<Pheromone>();
-                    marker.createPheromone(count);
-                //}
-            }
-            else
-            {
-                //Hard coded 1 = homepheromone
-                //if (gameManager.objectPool[1].Count < gameManager.numberstospawn)
-                //{
-                    marker = gameManager.objectPool[1].Spawn(this.transform.position).GetComponent<Pheromone>();
-                    marker.createPheromone(count);
-                //}
-            }
-
-            lastMarkerPosition = marker.transform.position = new Vector3(RoundDecimal(transform.position.x), RoundDecimal(transform.position.y), 0);
-
-            
-        }
-    }*/
-
     void HandleFood() {
         if (targetFood == null)
         {
-            /*Collider2D[] allFood = Physics2D.OverlapCircleAll(position, viewRadius, foodLayer);
-
-            if (allFood.Length > 0)
-            {
-                Transform food = allFood[Random.Range(0, allFood.Length)].transform;
-                Vector2 dirToFood = (food.position - new Vector3(head.position.x, head.position.y)).normalized;
-                //Debug.Log(Vector2.Angle(head.transform.right, dirToFood));
-                if (Vector2.Angle(head.transform.right, dirToFood) < viewAngle)
-                {
-                    food.gameObject.layer = takenFoodLayer;
-                    targetFood = food;
-                }
-            }*/
             foreach(Food food in mapGenerator.listFoods){
                 if (Distance(this.position, food.transform.position) <= viewRadius)
                 {
                     if (food.count > 0)
                     {
                         Vector2 dirToFood = (food.transform.position - new Vector3(head.position.x, head.position.y)).normalized;
-                        //Debug.Log(Vector2.Angle(head.transform.right, dirToFood));
                         if (Vector2.Angle(head.transform.right, dirToFood) < viewAngle)
                         {
                             food.gameObject.layer = takenFoodLayer;
@@ -309,7 +213,15 @@ public class Ant : MonoBehaviour
                     searchingForFood = false;
                     body.material.color = Color.yellow;
                     count = 0;
-                    ReverseDirection();
+
+                    if (gameManager.mode == 4)
+                    {
+                        ReverseDirection();
+                        ProbabilisticWander();
+                    } else
+                    {
+                        ReverseDirection();
+                    }
                 }
             }
         }
@@ -380,6 +292,27 @@ public class Ant : MonoBehaviour
     float Distance(Vector3 v1, Vector3 v2)
     {
         return Mathf.Sqrt(Mathf.Pow(v1.x - v2.x, 2) + Mathf.Pow(v1.y - v2.y, 2));
+    }
+
+    double GaussianSample(double mean, double stddev)
+    {
+        double x1 = 1.0 - rand.NextDouble();
+        double x2 = 1.0 - rand.NextDouble();
+
+        // random normal(0, 1)
+        double randStdNormal = System.Math.Sqrt(-2.0 * System.Math.Log(x1)) *
+             System.Math.Sin(2.0 * System.Math.PI * x2);
+
+        // random normal(mean, stddev)
+        return mean + stddev * randStdNormal;
+    }
+
+    void ProbabilisticWander()
+    {
+        float ret = (float)GaussianSample(0, 1);
+        Debug.Log("Le value is " + ret);
+        desiredDirection = MathHelper.Rotate2D(desiredDirection, ret);
+        transform.Rotate(0, 0, ret, Space.World);
     }
 
     public void ReverseDirection()
