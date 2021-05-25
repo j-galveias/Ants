@@ -106,9 +106,9 @@ public class MapGenerator : MonoBehaviour {
         {
 			int x = 1;
 			int y = 1;
-			while (map[x, y] != 0 || map[x - 1, y] != 0 || map[x + 1, y] != 0 || map[x, y - 1] != 0 || map[x, y + 1] != 0 ||
+			while (map[x, y] != 0 || map[x - 3, y] != 0 || map[x + 3, y] != 0 || map[x, y - 3] != 0 || map[x, y + 3] != 0 ||
 				(x > (width / 2) - 10 && x < (width / 2) + 10) || (y > (height / 2) - 10 && y < (height / 2) + 10) || !checkFoodPosition(x, y)
-				/*&& map[x + 1, y + 1] == 0 && map[x - 1, y + 1] == 0 && map[x + 1, y - 1] == 0 && map[x - 1, y - 1] == 0*/)
+				&& map[x + 3, y + 3] != 0 && map[x - 3, y + 3] != 0 && map[x + 3, y - 3] != 0 && map[x - 3, y - 3] != 0)
 			{
 				x = pseudoRandom.Next(1, width - 1);
 				y = pseudoRandom.Next(1, height - 1);

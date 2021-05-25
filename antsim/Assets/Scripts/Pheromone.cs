@@ -23,20 +23,24 @@ public class Pheromone : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-        creationTime = Time.time;
+        creationTime = 0;
         intensity = 0;
         maxIntensity = 1000;
     }
 
     private void OnEnable()
     {
-        creationTime = Time.time;
+        creationTime = 0;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Time.time - creationTime > disappearTime || intensity <= 0)
+        float deltaTime = Time.deltaTime;
+
+        creationTime += deltaTime;
+
+        if (creationTime > disappearTime || intensity <= 0)
         {
             //Destroy(transform.gameObject);
             /*Color temp = _renderer.color;
@@ -48,12 +52,12 @@ public class Pheromone : MonoBehaviour
         }
 
 
-        intensity -= Time.deltaTime;
+        intensity -= deltaTime;
     }
 
     public void createPheromone(float count)
     {
-        creationTime = Time.time;
+        creationTime = 0;
         intensity = 1000.0f * Mathf.Exp(-coef * count);
         Color temp = _renderer.color;
         alpha = intensity / maxIntensity;
