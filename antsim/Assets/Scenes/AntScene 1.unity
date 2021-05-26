@@ -660,7 +660,7 @@ MonoBehaviour:
   height: 50
   seed: 5
   useRandomSeed: 0
-  randomFillPercent: 48
+  randomFillPercent: 50
   numAnts: 100
   foodPacks: 3
   foodSpawnCount: 500
