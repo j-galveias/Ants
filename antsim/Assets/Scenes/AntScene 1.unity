@@ -661,7 +661,7 @@ MonoBehaviour:
   seed: 5
   useRandomSeed: 0
   randomFillPercent: 48
-  numAnts: 2
+  numAnts: 100
   foodPacks: 3
   foodSpawnCount: 500
   foodGameObject: {fileID: 5852316306258805818, guid: 766e57f457e803c41bdfd23cfa809730,

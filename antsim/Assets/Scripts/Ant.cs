@@ -53,6 +53,9 @@ public class Ant : MonoBehaviour
 
     MapGenerator mapGenerator;
 
+    int steps;
+    int hitCounter;
+
     int updateCounter;
     private void Start()
     {
@@ -65,6 +68,8 @@ public class Ant : MonoBehaviour
         count = 0;
         updateCounter = 0;
         pheromonePeriod = 0.125f;
+        steps = 0;
+        hitCounter = 0;
     }
 
     // Update is called once per frame
@@ -80,6 +85,7 @@ public class Ant : MonoBehaviour
         {
             if (Random.value < 0.001f && gameManager.mode >= 3 && !searchingForFood)
             {
+                steps = 30;
                 if (Random.value < 0.5f)
                 {
                     desiredDirection = MathHelper.Rotate2D(desiredDirection, gameManager.mode == 4 ? Random.Range(0, MathConstants.MATH_2PI) : Random.Range(0, MathConstants.MATH_PI_4));
@@ -89,11 +95,12 @@ public class Ant : MonoBehaviour
                     desiredDirection = MathHelper.Rotate2D(desiredDirection, -(gameManager.mode == 4 ? Random.Range(0, MathConstants.MATH_2PI) : Random.Range(0, MathConstants.MATH_PI_4)));
                 }
             }
-            else
+            else if(steps == 0)
             {
                 HandlePheromoneSteering();
             }
         }
+        steps = Mathf.Max(0, steps - 1);
         if (searchingForFood)
         {
             HandleFood();
@@ -113,6 +120,7 @@ public class Ant : MonoBehaviour
             {
                 desiredDirection = resultFront.point + resultFront.normal * avoidDistance;
                 //desiredDirection = -transform.right;
+                hitCounter++;
             }
             else
             {
@@ -121,6 +129,7 @@ public class Ant : MonoBehaviour
                 {
                     desiredDirection = resultLeft.point + resultLeft.normal * avoidDistance;
                     //desiredDirection = -transform.right;
+                    hitCounter++;
                 }
                 else
                 {
@@ -131,6 +140,11 @@ public class Ant : MonoBehaviour
                     {
                         desiredDirection = resultRight.point + resultLeft.normal * avoidDistance;
                         //desiredDirection = -transform.right;
+                        hitCounter++;
+                    }
+                    else
+                    {
+                        hitCounter = 0;
                     }
                 }
             }
@@ -148,6 +162,10 @@ public class Ant : MonoBehaviour
         transform.SetPositionAndRotation(position, Quaternion.Euler(0, 0, angle));
         DropPheromone();
         CheckOutsideMap();
+        if (hitCounter >= 10)
+        {
+            this.transform.position = new Vector3(nest.transform.position.x, nest.transform.position.y, 0);
+        }
     }
 
     void DropPheromone()
@@ -313,6 +331,7 @@ public class Ant : MonoBehaviour
         Debug.Log("Le value is " + ret);
         desiredDirection = MathHelper.Rotate2D(desiredDirection, ret);
         transform.Rotate(0, 0, ret, Space.World);
+        steps = 30;
     }
 
     public void ReverseDirection()
