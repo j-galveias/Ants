@@ -80,13 +80,13 @@ public class Ant : MonoBehaviour
         {
             if (Random.value < 0.001f && gameManager.mode >= 3 && !searchingForFood)
             {
-                if (Random.value < 0.5f)
+                if (gameManager.mode == 4)
                 {
-                    desiredDirection = MathHelper.Rotate2D(desiredDirection, gameManager.mode == 4 ? Random.Range(0, MathConstants.MATH_2PI) : Random.Range(0, MathConstants.MATH_PI_4));
+                    ProbabilisticWander();
                 }
                 else
                 {
-                    desiredDirection = MathHelper.Rotate2D(desiredDirection, -(gameManager.mode == 4 ? Random.Range(0, MathConstants.MATH_2PI) : Random.Range(0, MathConstants.MATH_PI_4)));
+                    desiredDirection = MathHelper.Rotate2D(desiredDirection, Random.Range(0, MathConstants.MATH_2PI));
                 }
             }
             else
@@ -309,7 +309,7 @@ public class Ant : MonoBehaviour
 
     void ProbabilisticWander()
     {
-        float ret = (float)GaussianSample(0, 1);
+        float ret = (float)GaussianSample(0, 0.3);
         Debug.Log("Le value is " + ret);
         desiredDirection = MathHelper.Rotate2D(desiredDirection, ret);
         transform.Rotate(0, 0, ret, Space.World);
