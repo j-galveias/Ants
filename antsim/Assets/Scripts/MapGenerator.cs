@@ -33,6 +33,8 @@ public class MapGenerator : MonoBehaviour {
 
 	public int[,] map;
 
+	public float treshold;
+
     private void Awake()
     {
 		listAnts = new List<Ant>();
@@ -41,13 +43,14 @@ public class MapGenerator : MonoBehaviour {
     void Start() {
 		seed = FindObjectOfType<SeedAndMode>().Seed;
 		GenerateMap();
+		treshold = 0.95f;
 	}
 
 	void Update() {
         /*if (Input.GetMouseButtonDown(0)) {
 			GenerateMap();
 		}*/
-        if (nest.food == foodSpawnCount * foodPacks)
+        if (nest.food == (foodSpawnCount * foodPacks * treshold))
         {
 			TimerControler.instace.StopTimer();
         }
