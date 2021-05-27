@@ -70,6 +70,7 @@ public class Ant : MonoBehaviour
         pheromonePeriod = 0.125f;
         steps = 0;
         hitCounter = 0;
+        targetFood = null;
     }
 
     // Update is called once per frame
@@ -165,6 +166,10 @@ public class Ant : MonoBehaviour
         if (hitCounter >= 10)
         {
             this.transform.position = new Vector3(nest.transform.position.x, nest.transform.position.y, 0);
+            if (!searchingForFood)
+            {
+                DropFood();
+            }
         }
     }
 
@@ -343,11 +348,11 @@ public class Ant : MonoBehaviour
     void CheckOutsideMap() {
         if (Mathf.RoundToInt(this.position.x) <= 0 || Mathf.RoundToInt(this.position.x) >= mapGenerator.width - 1 || Mathf.RoundToInt(this.position.y) <= 0 || Mathf.RoundToInt(this.position.y) >= mapGenerator.height - 1)
         {
+            this.transform.position = new Vector3(mapGenerator.width / 2, mapGenerator.height / 2, 0);
             if (!searchingForFood)
             {
                 DropFood();
             }
-            this.transform.position = new Vector3(mapGenerator.width / 2, mapGenerator.height / 2, 0);
         }
         else if (mapGenerator.map[Mathf.RoundToInt(this.position.x), Mathf.RoundToInt(this.position.y)] != 0 
             && mapGenerator.map[Mathf.RoundToInt(this.position.x) - 1, Mathf.RoundToInt(this.position.y)] != 0 
@@ -355,11 +360,11 @@ public class Ant : MonoBehaviour
             && mapGenerator.map[Mathf.RoundToInt(this.position.x), Mathf.RoundToInt(this.position.y) - 1] != 0 
             && mapGenerator.map[Mathf.RoundToInt(this.position.x), Mathf.RoundToInt(this.position.y) + 1] != 0)
         {
+            this.transform.position = new Vector3(mapGenerator.width / 2, mapGenerator.height / 2, 0);
             if (!searchingForFood)
             {
                 DropFood();
             }
-            this.transform.position = new Vector3(mapGenerator.width / 2, mapGenerator.height / 2, 0);
         }
     }
 }
