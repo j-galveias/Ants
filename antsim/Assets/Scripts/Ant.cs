@@ -34,8 +34,6 @@ public class Ant : MonoBehaviour
 
     private PheromonePooler pheromonePooler;
 
-    private float pheromoneEvaporateTime;
-
     public string foodMarker;
     public string homeMarker;
     private Vector2 lastMarkerPosition;
@@ -314,18 +312,15 @@ public class Ant : MonoBehaviour
         double x1 = 1.0 - rand.NextDouble();
         double x2 = 1.0 - rand.NextDouble();
 
-        // random normal(0, 1)
         double randStdNormal = System.Math.Sqrt(-2.0 * System.Math.Log(x1)) *
              System.Math.Sin(2.0 * System.Math.PI * x2);
 
-        // random normal(mean, stddev)
         return mean + stddev * randStdNormal;
     }
 
     void ProbabilisticWander()
     {
         float ret = (float)GaussianSample(0, 0.3);
-        Debug.Log("Le value is " + ret);
         desiredDirection = MathHelper.Rotate2D(desiredDirection, ret);
         transform.Rotate(0, 0, ret, Space.World);
         steps = 30;

@@ -1,0 +1,2 @@
+To run the project, type a seed in the seed text box, select one of the modes and click start.
+Seeds we used to test the project: "ANT", "Vilela" and "asdfg". Some other seeds may work aswell, but some can crash the program, because no valid food placement was found.
