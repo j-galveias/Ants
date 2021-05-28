@@ -26,9 +26,12 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        foreach (Ant ant in listAnts)
+        if (listAnts != null)
         {
-            ant.OnUpdate();
+            foreach (Ant ant in listAnts)
+            {
+                ant.OnUpdate();
+            }
         }
 
         text.text = mode.ToString();

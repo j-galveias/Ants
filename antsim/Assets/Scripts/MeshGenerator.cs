@@ -411,6 +411,5 @@ public class MeshGenerator : MonoBehaviour {
 			above = new Node(position + Vector3.forward * squareSize/2f);
 			right = new Node(position + Vector3.right * squareSize/2f);
 		}
-
 	}
 }

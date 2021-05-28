@@ -47,10 +47,7 @@ public class MapGenerator : MonoBehaviour {
 	}
 
 	void Update() {
-        /*if (Input.GetMouseButtonDown(0)) {
-			GenerateMap();
-		}*/
-        if (nest.food == (foodSpawnCount * foodPacks * treshold))
+        if (nest.food >= (int)(foodSpawnCount * foodPacks * treshold))
         {
 			TimerControler.instace.StopTimer();
         }
@@ -86,21 +83,17 @@ public class MapGenerator : MonoBehaviour {
 		this.transform.position = new Vector3(width / 2, height / 2, this.transform.position.z);
 		nest.gameObject.transform.position = new Vector3(width / 2, height / 2, nest.gameObject.transform.position.z);
 		_camera.transform.position = new Vector3(width / 2, height / 2, _camera.transform.position.z);
-		//ants.transform.position = new Vector3(width / 2, height / 2, ants.transform.position.z);
-		//foods.transform.position = new Vector3(width / 2, height / 2, foods.transform.position.z);
 
 		SpawnFood();
 
         for (int i = 0; i < numAnts; i++)
         {
 			GameObject ant = Instantiate(antPrefab);
-			//ant.transform.parent = ants.transform;
 			ant.transform.position = new Vector3(width / 2, height / 2, ant.transform.position.z);
 			listAnts.Add(ant.GetComponent<Ant>());
 		}
 		Time.timeScale = 3;
 		TimerControler.instace.StartTimer();
-		//pheromoneMap.CreatePheromoneMaps(map, width, height);
 	}
 
 	void SpawnFood() {
@@ -122,11 +115,6 @@ public class MapGenerator : MonoBehaviour {
 				continue;
             }
 
-			/*for (int k = 0; k < foodSpawnCount; k++)
-            {
-				GameObject food = Instantiate(foodGameObject);
-				food.transform.position = new Vector2(x, y);
-            }*/
 			Food food = Instantiate(foodGameObject).GetComponent<Food>();
 			food.transform.position = new Vector2(x, y);
 			food.count = foodSpawnCount;
@@ -248,7 +236,6 @@ public class MapGenerator : MonoBehaviour {
 
 	void CreatePassage(Room roomA, Room roomB, Coord tileA, Coord tileB) {
 		Room.ConnectRooms (roomA, roomB);
-		//Debug.DrawLine (CoordToWorldPoint (tileA), CoordToWorldPoint (tileB), Color.green, 100);
 
 		List<Coord> line = GetLine (tileA, tileB);
 		foreach (Coord c in line) {
@@ -409,7 +396,6 @@ public class MapGenerator : MonoBehaviour {
 					map[x,y] = 1;
 				else if (neighbourWallTiles < 4)
 					map[x,y] = 0;
-
 			}
 		}
 	}
@@ -500,5 +486,4 @@ public class MapGenerator : MonoBehaviour {
 			return otherRoom.roomSize.CompareTo (roomSize);
 		}
 	}
-
 }

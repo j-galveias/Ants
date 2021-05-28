@@ -78,10 +78,6 @@ public class Ant : MonoBehaviour
     {
         desiredDirection = (desiredDirection + Random.insideUnitCircle * wanderStrength).normalized;
 
-        //RaycastHit2D resultLeft = Physics2D.Raycast(head.position, Quaternion.AngleAxis(30, Vector3.forward) * transform.right, 0.5f, wallLayer);
-        //Debug.DrawRay(head.position, Quaternion.AngleAxis(30, Vector3.forward) * transform.right, Color.red);
-        //Debug.DrawRay(head.position, Quaternion.AngleAxis(-30, Vector3.forward) * transform.right, Color.red);
-
         if (targetFood == null && gameManager.mode >= 2 )
         {
             if (Random.value < 0.001f && gameManager.mode >= 3 && !searchingForFood)
@@ -116,31 +112,27 @@ public class Ant : MonoBehaviour
         {
             Debug.DrawRay(head.position, MathHelper.Rotate2D(desiredDirection, MathConstants.MATH_PI / 6), Color.red);
             Debug.DrawRay(head.position, MathHelper.Rotate2D(desiredDirection, -MathConstants.MATH_PI / 6), Color.red);
-            RaycastHit2D resultFront = Physics2D.Raycast(head.position, desiredDirection/*Quaternion.AngleAxis(30, Vector2.right) * head.transform.right*/, 1f, wallLayer);
+            RaycastHit2D resultFront = Physics2D.Raycast(head.position, desiredDirection, 1f, wallLayer);
             if (resultFront.collider != null)
             {
                 desiredDirection = resultFront.point + resultFront.normal * avoidDistance;
-                //desiredDirection = -transform.right;
                 hitCounter++;
             }
             else
             {
-                RaycastHit2D resultLeft = Physics2D.Raycast(head.position, MathHelper.Rotate2D(desiredDirection, MathConstants.MATH_PI / 6)/*Quaternion.AngleAxis(30, Vector2.right) * head.transform.right*/, 0.8f, wallLayer);
+                RaycastHit2D resultLeft = Physics2D.Raycast(head.position, MathHelper.Rotate2D(desiredDirection, MathConstants.MATH_PI / 6), 0.8f, wallLayer);
                 if (resultLeft.collider != null)
                 {
                     desiredDirection = resultLeft.point + resultLeft.normal * avoidDistance;
-                    //desiredDirection = -transform.right;
                     hitCounter++;
                 }
                 else
                 {
-                    //RaycastHit2D resultRight = Physics2D.Raycast(head.position, Quaternion.AngleAxis(-30, Vector3.forward) * transform.right, 0.5f, wallLayer);
-                    RaycastHit2D resultRight = Physics2D.Raycast(head.position, MathHelper.Rotate2D(desiredDirection, -MathConstants.MATH_PI / 6)/*Quaternion.AngleAxis(-30, Vector2.right) * head.transform.right*/, 0.8f, wallLayer);
+                    RaycastHit2D resultRight = Physics2D.Raycast(head.position, MathHelper.Rotate2D(desiredDirection, -MathConstants.MATH_PI / 6), 0.8f, wallLayer);
 
                     if (resultRight.collider != null)
                     {
                         desiredDirection = resultRight.point + resultLeft.normal * avoidDistance;
-                        //desiredDirection = -transform.right;
                         hitCounter++;
                     }
                     else

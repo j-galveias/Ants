@@ -42,12 +42,6 @@ public class Pheromone : MonoBehaviour
 
         if (creationTime > disappearTime || intensity <= 0)
         {
-            //Destroy(transform.gameObject);
-            /*Color temp = _renderer.color;
-            alpha = 0;
-            temp.a = alpha;
-            _renderer.color = temp;
-            intensity = 0;*/
             gameObject.SetActive(false);
         }
 
