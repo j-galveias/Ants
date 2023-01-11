@@ -22,14 +22,10 @@ public class MapGenerator : MonoBehaviour {
 
 	public Anthill nest;
 	public GameObject _camera;
-	public GameObject ants;
-	public GameObject foods;
 	public GameObject antPrefab;
 	public List<Ant> listAnts;
 
 	public List<Food> listFoods;
-
-	public PheromoneMap pheromoneMap;
 
 	public int[,] map;
 
